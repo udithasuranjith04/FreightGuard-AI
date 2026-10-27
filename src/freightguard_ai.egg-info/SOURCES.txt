@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-src/freightguard/__init__.py
-src/freightguard_ai.egg-info/PKG-INFO
-src/freightguard_ai.egg-info/SOURCES.txt
-src/freightguard_ai.egg-info/dependency_links.txt
-src/freightguard_ai.egg-info/requires.txt
-src/freightguard_ai.egg-info/top_level.txt
