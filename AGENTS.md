@@ -18,15 +18,19 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 ## Current handoff
 
-Milestones 1–3 (documentation, dataset contract, and leakage-safe preparation) are
-complete. No prediction model, API, or frontend exists yet.
+Milestones 1–4 (documentation, validation, preparation, and model evaluation) are
+complete. API and frontend do not exist yet.
 `python -m freightguard.validate_data` checks the version 1 order-level contract
 and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
 `python -m freightguard.prepare_data` creates chronological order splits and fits
 preprocessing on training inputs only. It saves ignored aggregate metadata, not
 order records or fitted objects. Read `docs/PREPARATION.md` before training work.
-Milestone 2 was committed as `dabc8c9` at the user's explicit request; milestone 3
-requires a new checkpoint after review. Do not train a model without authorization.
+Milestones 2/3 were committed as `dabc8c9`/`b50039b` at the user's explicit request.
+Milestone 4 is uncommitted for review. Frozen local v1 artifacts live under ignored
+`data/processed/models/v1/`. Read `docs/TRAINING.md` before using them.
+Random Forest at 0.40 was selected on validation; final test was evaluated once.
+It predicts every test order late at that threshold. Report this limitation honestly.
+Do not change model/threshold or retest to improve the frozen result.
 `src/freightguard/inspect_data.py` is existing user work: at the initial audit its
 empty file was staged and its implementation was unstaged (`AM`). Preserve both
 states unless the user explicitly asks to change them. Check current status rather
@@ -68,6 +72,12 @@ than assuming that snapshot remains true.
   adjust dates to improve scores. Bump preparation version for semantic changes.
 - Keep IDs/timestamps/targets separate from `X`. Learn scaler statistics and
   categorical vocabularies only from training; use transform-only on held-out data.
+- Training seed=42, three fixed candidates, validation-F1 selection. Completed
+  `train_model` runs replay saved JSON without refitting/predicting/unpickling.
+  Never bypass the test marker or create new run paths to retune on this holdout.
+- Never automatically load serialized uploads/downloads. `load_model` requires
+  explicit local trust and a checked SHA-256; a hash alone does not establish trust.
+  Artifacts contain only the five-input pipeline, never records or customer fields.
 - Use only aggregate or synthetic examples in public artifacts. Review notebooks
   and saved artifacts for embedded customer information before sharing.
 
@@ -76,6 +86,7 @@ than assuming that snapshot remains true.
 - `docs/ARCHITECTURE.md`: observed code, folders, dependencies, and Git history.
 - `docs/DATA_AND_ML.md`: dataset facts, privacy, leakage, and evaluation decisions.
 - `docs/PREPARATION.md`: implemented split policy, preprocessing, metadata, and risks.
+- `docs/TRAINING.md`: frozen model selection, final metrics, loading, and limitations.
 - `docs/DECISIONS.md`: accepted constraints and decisions still pending.
 - `docs/DEVELOPMENT.md`: local setup and current checks; deployment status.
 - `docs/MILESTONES.md`: incremental implementation plan and acceptance criteria.

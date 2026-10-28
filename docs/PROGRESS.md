@@ -2,9 +2,10 @@
 
 ## Current status
 
-Milestones 1–3 are complete. The project has the original inspection script,
-privacy-safe validation, chronological one-order preparation, training-only
-preprocessing, and synthetic tests. No prediction model, API, or frontend exists.
+Milestones 1–4 are complete. Validation, preparation, baseline training, frozen
+evaluation, and trusted local prediction/loading exist. No API/frontend exists.
+The selected forest at 0.40 predicts all test orders late; this limitation is
+documented and no post-test retuning was performed. Milestone 4 is uncommitted.
 
 ## 2026-10-28 — Milestone 1: document the baseline
 
@@ -201,3 +202,94 @@ These are documented in `PREPARATION.md`; no production accuracy is claimed.
 Recommended checkpoint: `feat: add leakage-safe chronological data preparation`.
 Milestone 3 remains unstaged/uncommitted. Exclude the pre-existing script and all
 local dataset/metadata files. Milestone 4 model training requires a new request.
+
+## 2026-10-28 — Milestone 3 Git checkpoint
+
+At the user's explicit request, staged and verified twelve milestone 3 paths,
+alongside the preserved pre-existing empty staged script. Used `git commit --only`
+with the twelve paths. Commit `b50039b` succeeded; its path list contains only
+approved code/tests/docs and excludes the script/data/artifacts. Verified the
+script still has the original staged blob and working SHA-256.
+
+## 2026-10-28 — Milestone 4: model training and evaluation
+
+### Focused plan and selection rule
+
+1. Reuse chronological splits, gaps, one-order unit, and five approved inputs.
+2. Train fixed majority DummyClassifier, Logistic Regression, and bounded forest
+   candidates, each with fresh training-only preprocessing; seed 42.
+3. Maximize validation F1 over thresholds 0.05–0.95 step 0.05. Threshold ties:
+   closest to 0.50, then lower; model ties: higher PR-AUC, then simpler model.
+4. Examine imbalance/calibration; reproduce train/validation results before test.
+5. Freeze selection and artifact, mark final evaluation, predict test exactly once,
+   and reuse that probability vector for overall/calibration/subgroup metrics.
+6. Add safe versioned persistence/loading/schema tests, run checks, document risks.
+   Do not build API/frontend or commit this milestone before user review.
+
+### Changes
+
+- Added `train_model.py`, `evaluation.py`, `model_artifact.py`, and synthetic
+  `tests/test_training.py`; no existing working code was replaced.
+- Declared already-installed joblib directly for serialization in pyproject.toml.
+- Added `docs/TRAINING.md`; updated AGENTS, README, architecture, data/ML,
+  preparation, decisions, development, milestones, and this progress report.
+- Saved ignored `data/processed/models/v1/` selection, pipeline, test guard, and
+  aggregate evaluation metadata. Artifact schema/training/preparation/contract
+  versions are 1; model version v1. No customer records or individual predictions.
+- Added privacy-safe logging of fixed candidate/run events. Serialized loading is
+  opt-in for trusted local files, with checksum/version/feature contract checks.
+
+### Frozen findings
+
+Validation only selected Random Forest at threshold 0.40. No calibrator, test-based
+parameter changes, or train+validation refit. Class imbalance is modest (~57.4%
+late in training); no weights/resampling. Full-data validation predictions and
+reports reproduced exactly across two independent fits before final evaluation.
+
+| Partition/candidate | Accuracy | Precision | Recall | F1 | ROC-AUC | PR-AUC |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Validation majority, 0.50 | 0.5660 | 0.5660 | 1.0000 | 0.7228 | 0.5000 | 0.5660 |
+| Validation logistic, 0.30 | 0.5674 | 0.5669 | 0.9981 | 0.7231 | 0.7398 | 0.8235 |
+| Validation forest, 0.40 | 0.5790 | 0.5753 | 0.9790 | 0.7247 | 0.7426 | 0.8253 |
+| Final test forest, 0.40 | 0.5756 | 0.5756 | 1.0000 | 0.7307 | 0.7494 | 0.8345 |
+
+Final test confusion: `[[0, 5547], [0, 7524]]`. Every test order is predicted late;
+the selected binary operating point offers no advantage over always-late on test.
+Global ranking is informative, but supported within-mode ROC-AUC is near 0.5.
+Shipping mode/scheduled days account for about 98.4% of forest impurity importance;
+the model mainly learns shipping-plan associations, not granular order information.
+
+Validation Brier: logistic 0.1905, forest 0.1914, constant-prior reference 0.2457.
+Logistic has better validation calibration; forest test Brier 0.1888, bin ECE 0.0372.
+Full confusion matrices, calibration diagnostics, and supported shipping-mode,
+market, and region results appear in TRAINING.md and ignored evaluation metadata.
+Small/per-class-insufficient subgroups are suppressed. No training accuracy claimed.
+
+### Validation and remaining risks
+
+| Check | Final result |
+| --- | --- |
+| `python -m pytest -q` | 59 passed; all automated data fixtures are synthetic. |
+| Ruff on implemented modules/tests | Passed; new files formatted with Ruff. |
+| Full-repository Ruff | Only the preserved pre-existing `I001` in inspect_data.py; exit 1. |
+| Full-data reproducibility before test | Two independent train/validation fits give identical reports, selection, and validation probabilities. |
+| Final real test | Exactly one selected-pipeline prediction pass, reused for all metrics/calibration/groups; no other candidate test predictions. |
+| Replay guard | Existing real run returns identical JSON with Pipeline.fit, predict_proba, and joblib.load patched to fail; no retest or automatic load. |
+| Local artifact smoke check | Explicitly trusted checksum-verified v1 pipeline loads and predicts synthetic five-field input; artifact is 183,269 bytes. |
+| Privacy/preservation | Raw CSVs and all four model-run files are ignored; only data .gitkeep files tracked; source fingerprint and script checksum/index unchanged. |
+| Docs and whitespace | Relative links resolve; Markdown and both Git diff whitespace checks pass. |
+
+The test was evaluated once; subsequent commands must only replay its saved result.
+
+F1 favors broad positives in this cohort; the gain over majority is tiny on
+validation, and binary test predictions are all positive. No operational alert
+cost/capacity objective exists. Probabilities remain experimental. Historical
+retail data, narrowing geography, future cancellation exclusions, uncertain label
+timing/censoring, repeated customers, unverified provenance/license, and unpinned
+dependencies remain risks. Do not retune on this test; a future modeling effort
+needs a fresh evaluation plan. Nothing is deployed.
+
+Recommended checkpoint after review:
+`feat: add reproducible model training and frozen evaluation`.
+Milestone 4 remains unstaged/uncommitted; preserve the existing script and ignore
+all data/models/metadata. No API/frontend was built.

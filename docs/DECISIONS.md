@@ -10,7 +10,7 @@ sessions do not mistake the roadmap for delivered functionality.
 | pytest and Ruff | Existing | Already declared developer tools. |
 | Raw/processed data remain local and ignored | Required | Protect customer information and keep data out of Git. |
 | Five-field feature allowlist | Implemented in milestone 2 | Only shared, broad order/shipping-plan fields; no personal or outcome fields. |
-| Training-only ColumnTransformer | Implemented in milestone 3 | Scale scheduled days, one-hot encode four categories; no targets or metadata passed to fit. Classifier integration is future work. |
+| Training-only ColumnTransformer | Implemented in milestones 3/4 | Scale scheduled days, one-hot encode four categories; each classifier pipeline fits only training inputs. |
 | FastAPI prediction backend | User requirement, pending implementation | Typed request validation and a clear API boundary. |
 | Incremental milestones and learner-friendly explanations | Required | Make each change reviewable and understandable. |
 | Simple single-service backend first | Proposed | Current scope does not justify distributed infrastructure. |
@@ -20,6 +20,12 @@ sessions do not mistake the roadmap for delivered functionality.
 | Seven-day earlier-side maturity gaps | Implemented in preparation v1 | Exclude 761 orders near boundaries to reduce use of outcomes that might not yet be available. Label timing remains an assumption. |
 | Unknown category handling and missing inputs | Implemented in milestone 3 | Unknown categorical values encode as zeros for their field; required missing inputs fail validation instead of being imputed. |
 | Save aggregate metadata only | Implemented in milestone 3 | Dataset fingerprint/config/versions/counts recreate splits locally without publishing IDs, records, or fitted vocabulary. |
+| Fixed candidates and seed 42 | Implemented in training v1 | Majority dummy, logistic, bounded single-worker forest; no test-dependent search. |
+| Validation F1 selection | Frozen before final test | Fixed 0.05–0.95 grid; documented deterministic ties. Forest at 0.40 wins narrowly. |
+| Retain all-late test result | Required for evaluation integrity | No post-test threshold changes. Ranking is informative, but selected binary alerts offer no advantage over always-late on test. |
+| Calibration diagnostics only | Implemented in milestone 4 | Brier/log loss/reliability bins; no calibrator fitted on reused validation data. |
+| Versioned local joblib pipeline | Implemented in milestone 4 | Ignored artifacts; explicit local trust plus checksum/version/schema checks before use; no automatic deserialization. |
+| One final test prediction and immutable replay | Implemented in milestone 4 | Frozen selection and exclusive marker precede test; completed runs replay saved aggregates. |
 
 ## Open decisions
 
@@ -30,6 +36,8 @@ sessions do not mistake the roadmap for delivered functionality.
   the seven-day maturity assumption cannot be proven by this snapshot.
 - Choose reproducible dependency version constraints/locking after checking the
   baseline environment; nothing is pinned beyond Python/build requirements yet.
+- Establish an alert cost/capacity objective and a fresh evaluation plan before
+  optimizing beyond this frozen result. Do not retune on the existing test set.
 - Choose frontend framework, chart library, API schema, and hosting provider in
   their respective milestones. Explain major architecture changes before acting.
 - Decide how to distribute a public-safe model artifact and aggregate reports.

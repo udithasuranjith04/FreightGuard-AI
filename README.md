@@ -21,11 +21,13 @@ arrival.
 
 ## Project status
 
-Repository documentation, dataset validation, and leakage-safe preparation are
-complete. The baseline
+Documentation, validation, preparation, and baseline model evaluation are complete.
+The baseline
 problem is order-level delay prediction when the checkout shipping plan is
-finalized, conditional on the order not later being canceled. Training, FastAPI
-predictions, and a responsive dashboard are not implemented yet.
+finalized, conditional on the order not later being canceled. Random Forest was
+selected on validation, but its frozen threshold predicts every test order late;
+this limits its usefulness for selective alerts. FastAPI and the dashboard are
+not implemented yet. See the full [evaluation and limitations](docs/TRAINING.md).
 
 ## Local development
 
@@ -45,6 +47,7 @@ Keep the separately obtained dataset at
 python -m freightguard.inspect_data
 python -m freightguard.validate_data
 python -m freightguard.prepare_data
+python -m freightguard.train_model
 python -m ruff check .
 python -m pytest
 ```
@@ -53,8 +56,11 @@ The original inspection prints aggregate summaries. The new validator reads only
 12 approved columns, checks the dataset contract, and prints aggregate JSON with
 a dataset fingerprint. Preparation uses one row per order, chronological splits
 with seven-day gaps, and preprocessing fitted only on training inputs. It saves
-aggregate metadata to ignored `data/processed/preparation_metadata.json`; no
-prediction model is trained. Tests use synthetic data. Full-repository lint still
+aggregate metadata to ignored `data/processed/preparation_metadata.json`.
+Training saves a versioned pipeline and aggregate evaluation under ignored
+`data/processed/models/v1/`; completed runs replay results without retesting.
+Do not delete that run to repeat test evaluation. Tests use synthetic data.
+Full-repository lint still
 reports the preserved inspection script's existing import-layout issue. See
 [development instructions](docs/DEVELOPMENT.md) for details and setup limitations.
 
@@ -64,6 +70,7 @@ reports the preserved inspection script's existing import-layout issue. See
 - [Current architecture and Git audit](docs/ARCHITECTURE.md)
 - [Dataset, privacy, and leakage prevention](docs/DATA_AND_ML.md)
 - [Data preparation, temporal splits, and tradeoffs](docs/PREPARATION.md)
+- [Model selection, evaluation, trusted loading, and limitations](docs/TRAINING.md)
 - [Technical decisions](docs/DECISIONS.md)
 - [Local development and deployment status](docs/DEVELOPMENT.md)
 - [Implementation milestones](docs/MILESTONES.md)

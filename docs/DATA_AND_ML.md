@@ -181,8 +181,9 @@ causal realism. It is not an assertion that source outcomes are trustworthy.
 Milestone 3 implements validated one-order selection, chronological splits at
 2017-01-01 and 2017-07-01 with seven-day earlier-side gaps, and training-only
 scaling/one-hot encoding. It preserves the five-input allowlist and integer
-0/1 target. Validation/test transformations do not fit anything. No model
-performance has been evaluated. The following rules govern future training:
+0/1 target. Validation/test transformations do not fit anything. Milestone 4
+evaluates fixed pipelines; see [training results](TRAINING.md). These rules
+continue to govern training:
 
 1. Run contract validation and select one row per non-canceled order. Keep
    identifiers/timestamps as local split metadata, separate from model inputs.
@@ -205,6 +206,7 @@ performance has been evaluated. The following rules govern future training:
 
 Tests should use invented rows to check prohibited columns, unknown categories,
 invalid inputs, and disjoint order groups across splits. These preparation tests
-now exist. No model has been trained and no predictive performance is claimed.
+now exist. Historical validation/test metrics are documented in `TRAINING.md`;
+they do not establish real-world performance.
 Historical retail supply-chain data may not represent real freight operations;
 the portfolio must state that limitation and avoid promising delivery guarantees.

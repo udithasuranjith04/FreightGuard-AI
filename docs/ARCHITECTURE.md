@@ -15,11 +15,14 @@ FreightGuard-AI/
 │   ├── __init__.py             empty package marker
 │   ├── inspect_data.py         local aggregate dataset inspection
 │   ├── validate_data.py        version 1 dataset contract and aggregate CLI
-│   └── prepare_data.py         chronological splits and training-only transforms
+│   ├── prepare_data.py         chronological splits and training-only transforms
+│   ├── evaluation.py           aggregate metrics, calibration, and subgroups
+│   ├── train_model.py          fixed candidates, selection, and one final test
+│   └── model_artifact.py       explicit trusted loading and strict predictions
 ├── data/
 │   ├── raw/                   ignored DataCo CSVs, tracked .gitkeep
-│   └── processed/             ignored aggregate metadata, tracked .gitkeep
-├── tests/                     synthetic validation/preparation tests and .gitkeep
+│   └── processed/             ignored metadata/models/v1, tracked .gitkeep
+├── tests/                     synthetic validation/preparation/training tests
 ├── docs/                      project documentation added in milestone 1
 ├── app/                       empty local placeholder
 └── notebooks/                 empty local placeholder
@@ -63,11 +66,21 @@ It returns aligned split objects, fitted preprocessing, and CSR matrices in memo
 Only public-safe aggregate metadata is saved to ignored `data/processed/`.
 See [preparation details](PREPARATION.md) for intervals and limitations.
 
+Milestone 4 adds training, evaluation, and artifact modules. Training reuses
+chronological splits and creates one train-fitted pipeline per candidate (majority
+dummy, logistic, bounded forest). Selection uses validation only. A frozen
+selection, local joblib artifact, and exclusive marker precede one test prediction
+call; all test aggregates reuse it. Completed runs replay JSON after identity and
+checksum checks, without deserialization. The trusted loader and strict five-input
+batch prediction interface are available for future API work. See `TRAINING.md`.
+
 ## Dependencies and tooling
 
 The package is `freightguard-ai` version `0.1.0`, built with setuptools (`>=68`)
 and a `src` layout. Python is restricted to 3.12. Runtime dependencies are NumPy,
-pandas, and scikit-learn; the `dev` extra adds pytest and Ruff. No dependency
+pandas, scikit-learn, and joblib; the `dev` extra adds pytest and Ruff. Joblib was
+already installed transitively and is now declared directly for serialization.
+No dependency
 lockfile or version bounds for these runtime/dev packages exist yet.
 
 The inspected PyCharm environment uses Python 3.12.10 in `.venv`, with pip.
@@ -76,17 +89,20 @@ pytest 9.1.1, and Ruff 0.17.3. These are observed local versions, not a lockfile
 or a guarantee about a fresh installation.
 
 Pytest searches `tests/`; Ruff's configured line length is 88.
-FastAPI, an ASGI server, frontend packages, logging configuration, CI,
-deployment configuration, models, and evaluation reports are absent.
+FastAPI, an ASGI server, frontend packages, CI, and deployment configuration are
+absent. Training logs fixed candidate/run events without records. A fitted
+pipeline and aggregate evaluation report now exist under ignored local data.
 Synthetic pytest coverage now exists for the dataset contract; the original
 milestone 1 observation that no tests existed is superseded by milestone 2.
 Milestone 3 adds split-integrity, training-only fit, unknown-category, and
 reproducibility tests using the existing dependencies; nothing new was installed.
+Milestone 4 adds training, selection, exactly-once prediction/replay, metrics,
+subgroup, schema/loading, and trust/checksum tests using synthetic data.
 
 ## Git audit
 
 The initial audit had two commits on `main` (also locally referenced by
-`origin/main`; no fetch was performed). The requested checkpoints add two local
+`origin/main`; no fetch was performed). The requested checkpoints add three local
 commits:
 
 | Commit | Change |
@@ -95,6 +111,7 @@ commits:
 | `35d1b66` | Removed generated package metadata from tracking and ignored `*.egg-info/`. |
 | `13a711f` | Milestone 1: eight documentation files only; user script excluded. |
 | `dabc8c9` | Milestone 2: validation, tests, and documentation; user script excluded. |
+| `b50039b` | Milestone 3: preparation, tests, and documentation; user script excluded. |
 
 No raw dataset files appear in those commits' file lists. The existing ignore
 rules cover raw/processed contents except `.gitkeep`, `.env`, environments,
@@ -116,8 +133,9 @@ Prediction form → FastAPI validation → same preprocessing/model → risk res
 Dashboard       → public-safe aggregates and evaluation charts
 ```
 
-Validation, order selection, splits, and preprocessing are implemented. Training,
-evaluation, a persisted model artifact, API, and dashboard remain future work.
+Validation, preparation, training, evaluation, and a persisted pipeline are
+implemented. API/dashboard/deployment remain future work. The frozen forest's
+binary test predictions are all late; useful selective alerts are not demonstrated.
 
 Start with one Python package and one FastAPI service, then choose a small
 frontend after reviewing its needs with the user. There is no approved frontend

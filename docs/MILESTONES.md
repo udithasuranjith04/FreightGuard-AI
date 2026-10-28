@@ -1,9 +1,9 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Milestones 1–3 are complete.
-The user approved and requested commits for milestones 1 and 2, and authorized
-leakage-safe preparation in milestone 3. Later milestones remain a proposed
-sequence, not permission for architecture changes or model training yet.
+Created before implementation on 2026-10-28. Milestones 1–4 are complete.
+The user approved/requested commits for milestones 1–3, and authorized fixed
+model training/evaluation in milestone 4. Milestone 4 remains uncommitted for
+review. API/frontend work is not authorized in this session.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -47,12 +47,22 @@ small; split a milestone into substeps if its diff becomes difficult to explain.
 5. Save aggregate metadata and add synthetic tests for leakage and reproducibility.
 6. Run dataset checks, tests, Ruff, and preservation checks; document tradeoffs.
 
-## Next: milestone 4 (not started or authorized in this session)
+## Milestone 4 focused plan (completed)
 
-Compare a dummy baseline and simple classifier using the established splits and
-feature contract. Before training, review the temporal shift, conditional cohort,
-and label-timing limitations in `PREPARATION.md`. Reuse training-fitted transforms;
-do not tune on test performance. No prediction model was trained in milestone 3.
+1. Preserve the established splits/five-input contract and declare selection rules.
+2. Implement seeded majority, logistic, and bounded forest pipelines; fit train only.
+3. Compare validation metrics/calibration and reproducibility; freeze the selection.
+4. Predict test once with the selected pipeline; reuse probabilities for groups.
+5. Save versioned ignored artifacts, strict trusted loading, schema tests and logs.
+6. Run checks and document the all-late final operating point without retuning.
 
-Outstanding work includes every capability in milestones 4–7. No model quality,
-production readiness, frontend framework, or deployment target has been established.
+## Next: milestone 5 (not started)
+
+FastAPI work requires a new request. Reuse the frozen pipeline/schema/loading
+rules and display research limitations honestly. The selected threshold predicts
+all test orders late; it is not a demonstrated selective-alert improvement.
+Any new modeling experiment needs a documented fresh evaluation plan rather than
+further optimization against this already-observed test set.
+
+Outstanding work includes milestones 5–7. Historical model metrics exist;
+production readiness, frontend framework, and hosting remain unestablished.

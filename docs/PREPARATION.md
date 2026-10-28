@@ -84,9 +84,10 @@ categories absent from training, but synthetic tests exercise that case. Unknown
 category row counts are reported without publishing category values. An unseen
 value is safely representable; that does not imply a model will perform well on it.
 
-The fitted preprocessor and matrices stay in memory. The next training milestone
-should combine this same preprocessing with its classifier in a pipeline and
-persist a reviewed artifact; it must not independently fit held-out transforms.
+The preparation command's fitted preprocessor and matrices stay in memory.
+Milestone 4 reuses the same preprocessing definition inside each candidate's
+classifier pipeline and persists the selected train-fitted pipeline. It does not
+independently fit held-out transforms; see `TRAINING.md` for the frozen evaluation.
 If using cross-validation later, fit a fresh pipeline inside each training fold.
 
 ## Saved metadata and reproducibility
@@ -132,4 +133,5 @@ splits, and insufficient gaps produce safe errors before fitting transformations
   training/validation and reserve the final test for the frozen evaluation.
 - The dataset is old retail supply-chain data with unverified provenance/license
   and event timing. There are no real-world delivery guarantees or performance
-  claims. No classifier has been trained in milestone 3.
+claims. No classifier was trained in milestone 3; milestone 4's historical metrics
+and important all-late threshold limitation are documented in `TRAINING.md`.

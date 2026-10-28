@@ -84,6 +84,29 @@ Custom fixed boundaries are available through `--validation-start`, `--test-star
 scores. The command fails safely if a split is empty/single-class or a gap is
 insufficient. The original validation command still writes no files.
 
+## Train or replay the frozen model experiment
+
+```sh
+python -m freightguard.train_model
+```
+
+On a fresh local checkout with the private CSV, this fits the three fixed
+train-only pipelines, selects on validation, and evaluates the winner on test
+once. In the current workspace v1 is already complete: this command only verifies
+identity/checksum and replays ignored `data/processed/models/v1/evaluation.json`.
+It does not unpickle, refit, or recompute test predictions. Never delete that run
+or choose new paths merely to retest the same holdout.
+
+The directory also contains the selected pipeline, frozen selection, and test
+guard. Partial runs stop for manual inspection. `--data`, `--run-dir`, and
+`--model-version` support explicitly planned experiments; they are not a way to
+tune against the frozen test. Full artifact trust instructions, metric meanings,
+and subgroup results are in [training documentation](TRAINING.md).
+
+Loading requires an explicitly trusted local artifact and verified SHA-256.
+Never deserialize an uploaded/downloaded model automatically. Prediction accepts
+exactly the five approved fields and rejects sensitive/extra columns.
+
 ## Checks
 
 ```sh
@@ -95,7 +118,7 @@ git status --short
 git check-ignore data/raw/DataCoSupplyChainDataset.csv data/processed/example.csv .env
 ```
 
-At milestone 3, synthetic validation/preparation tests pass without the raw dataset.
+At milestone 4, synthetic validation/preparation/training tests pass without raw data.
 Ruff passes on the implemented modules/tests; full-repository Ruff still reports the
 existing `I001` import-layout issue in `inspect_data.py`. That script is preserved
 at the user's explicit request. Do not change it merely to make lint green.
@@ -103,7 +126,7 @@ at the user's explicit request. Do not change it merely to make lint green.
 To check only the new code:
 
 ```sh
-python -m ruff check src/freightguard/validate_data.py src/freightguard/prepare_data.py tests/
+python -m ruff check src/freightguard/validate_data.py src/freightguard/prepare_data.py src/freightguard/evaluation.py src/freightguard/model_artifact.py src/freightguard/train_model.py tests/
 python -m pytest -q
 ```
 
@@ -145,11 +168,13 @@ The milestone 1 checkpoint was explicitly requested afterward and completed as
 script's staged empty blob and unstaged implementation were verified unchanged.
 Milestone 2 was subsequently committed as `dabc8c9`, containing only the ten
 approved implementation/test/documentation files; script preservation was verified.
-Milestone 3 remains uncommitted. Suggested checkpoint message:
-`feat: add leakage-safe chronological data preparation`.
-Review/stage its new preparation module/tests, updated validator helper, and
-documentation (including `docs/PREPARATION.md`); exclude the preserved script
-with an explicit-path commit as above. Do not stage generated metadata or raw data.
+Milestone 3 was subsequently committed as `b50039b`, containing twelve approved
+code/test/documentation paths; both script versions remain unchanged.
+Milestone 4 remains uncommitted pending the user's review of the reported results.
+Suggested checkpoint: `feat: add reproducible model training and frozen evaluation`.
+Stage only its three new modules, training tests, `pyproject.toml`, and affected
+documentation (including `docs/TRAINING.md`); use an explicit-path commit to
+exclude the preserved script. Never stage generated models/metadata or raw data.
 
 ## Deployment status
 
