@@ -58,6 +58,32 @@ fingerprint. It exits 1 with a sanitized error if required data is invalid; it
 does not train, split, or write any processed files. The exact five allowed
 features and cancellation policy are in `DATA_AND_ML.md`.
 
+## Run leakage-safe preparation
+
+```sh
+python -m freightguard.prepare_data
+```
+
+This validates the same local CSV, creates one-order chronological splits, fits
+preprocessing on training inputs only, and transforms validation/test inputs.
+Only aggregate metadata is saved to ignored
+`data/processed/preparation_metadata.json`; it also prints the same JSON.
+No model, transformed rows, order IDs, or fitted object are saved. All matrices
+and the fitted preprocessor are available in memory through `prepare_dataset()`.
+
+Repeated identical runs succeed without changing the metadata file. If a previous
+file has different content, choose a new output rather than overwriting it:
+
+```sh
+python -m freightguard.prepare_data --output data/processed/preparation_review.json
+```
+
+Custom fixed boundaries are available through `--validation-start`, `--test-start`
+(both YYYY-MM-DD), and `--gap-days`. Defaults and limitations are documented in
+[preparation details](PREPARATION.md). Do not move boundaries based on model
+scores. The command fails safely if a split is empty/single-class or a gap is
+insufficient. The original validation command still writes no files.
+
 ## Checks
 
 ```sh
@@ -69,15 +95,15 @@ git status --short
 git check-ignore data/raw/DataCoSupplyChainDataset.csv data/processed/example.csv .env
 ```
 
-At milestone 2, synthetic dataset-validation tests pass without the raw dataset.
-Ruff passes on the new module and tests; full-repository Ruff still reports the
+At milestone 3, synthetic validation/preparation tests pass without the raw dataset.
+Ruff passes on the implemented modules/tests; full-repository Ruff still reports the
 existing `I001` import-layout issue in `inspect_data.py`. That script is preserved
 at the user's explicit request. Do not change it merely to make lint green.
 
 To check only the new code:
 
 ```sh
-python -m ruff check src/freightguard/validate_data.py tests/test_validate_data.py
+python -m ruff check src/freightguard/validate_data.py src/freightguard/prepare_data.py tests/
 python -m pytest -q
 ```
 
@@ -117,10 +143,13 @@ the staged script separately before creating its own checkpoint. Never use
 The milestone 1 checkpoint was explicitly requested afterward and completed as
 `13a711f`, with exactly the eight documentation paths above and no script. The
 script's staged empty blob and unstaged implementation were verified unchanged.
-Milestone 2 changes remain uncommitted. Suggested checkpoint message:
-`feat: validate dataset and define order delay prediction contract`.
-Review/stage only its new module/tests and changed documentation; exclude the
-preserved script with an explicit-path commit as above.
+Milestone 2 was subsequently committed as `dabc8c9`, containing only the ten
+approved implementation/test/documentation files; script preservation was verified.
+Milestone 3 remains uncommitted. Suggested checkpoint message:
+`feat: add leakage-safe chronological data preparation`.
+Review/stage its new preparation module/tests, updated validator helper, and
+documentation (including `docs/PREPARATION.md`); exclude the preserved script
+with an explicit-path commit as above. Do not stage generated metadata or raw data.
 
 ## Deployment status
 

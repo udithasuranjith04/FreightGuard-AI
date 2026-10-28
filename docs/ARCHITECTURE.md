@@ -14,11 +14,12 @@ FreightGuard-AI/
 ├── src/freightguard/
 │   ├── __init__.py             empty package marker
 │   ├── inspect_data.py         local aggregate dataset inspection
-│   └── validate_data.py        version 1 dataset contract and aggregate CLI
+│   ├── validate_data.py        version 1 dataset contract and aggregate CLI
+│   └── prepare_data.py         chronological splits and training-only transforms
 ├── data/
 │   ├── raw/                   ignored DataCo CSVs, tracked .gitkeep
-│   └── processed/             only .gitkeep at audit
-├── tests/                     synthetic validation tests and .gitkeep
+│   └── processed/             ignored aggregate metadata, tracked .gitkeep
+├── tests/                     synthetic validation/preparation tests and .gitkeep
 ├── docs/                      project documentation added in milestone 1
 ├── app/                       empty local placeholder
 └── notebooks/                 empty local placeholder
@@ -53,6 +54,15 @@ error and nonzero exit status. `order_features()` returns only the five allowed
 inputs, one row per eligible order, with identifiers removed. It fits nothing
 and writes no data/artifacts. Tests use invented records and temporary CSVs.
 
+Milestone 3 extends the validated selector with `eligible_orders()` to retain
+parsed order dates/IDs and targets as separate split metadata. It preserves the
+original inspection script. `prepare_data.py` creates deterministic chronological
+splits with maturity gaps, separates `X` from `y`/IDs/dates, fits a ColumnTransformer
+on training features only, and transforms held-out features without fitting.
+It returns aligned split objects, fitted preprocessing, and CSR matrices in memory.
+Only public-safe aggregate metadata is saved to ignored `data/processed/`.
+See [preparation details](PREPARATION.md) for intervals and limitations.
+
 ## Dependencies and tooling
 
 The package is `freightguard-ai` version `0.1.0`, built with setuptools (`>=68`)
@@ -70,18 +80,21 @@ FastAPI, an ASGI server, frontend packages, logging configuration, CI,
 deployment configuration, models, and evaluation reports are absent.
 Synthetic pytest coverage now exists for the dataset contract; the original
 milestone 1 observation that no tests existed is superseded by milestone 2.
+Milestone 3 adds split-integrity, training-only fit, unknown-category, and
+reproducibility tests using the existing dependencies; nothing new was installed.
 
 ## Git audit
 
 The initial audit had two commits on `main` (also locally referenced by
-`origin/main`; no fetch was performed). The requested documentation checkpoint
-adds the third local commit:
+`origin/main`; no fetch was performed). The requested checkpoints add two local
+commits:
 
 | Commit | Change |
 | --- | --- |
 | `fe2755e` | Initial Python project foundation; included generated package metadata. |
 | `35d1b66` | Removed generated package metadata from tracking and ignored `*.egg-info/`. |
 | `13a711f` | Milestone 1: eight documentation files only; user script excluded. |
+| `dabc8c9` | Milestone 2: validation, tests, and documentation; user script excluded. |
 
 No raw dataset files appear in those commits' file lists. The existing ignore
 rules cover raw/processed contents except `.gitkeep`, `.env`, environments,
@@ -92,8 +105,9 @@ Before this documentation milestone, the only working change was
 unstaged implementation. No code, index entries, or history were changed during
 the documentation milestone. Commit `13a711f` was later explicitly requested
 and verified; it preserved that script's staged blob and working checksum.
+The explicitly requested milestone 2 checkpoint `dabc8c9` also preserved them.
 
-## Intended direction (not implemented)
+## Direction and remaining work
 
 ```text
 Local DataCo CSV → validation → safe features and data splits
@@ -101,6 +115,9 @@ Local DataCo CSV → validation → safe features and data splits
 Prediction form → FastAPI validation → same preprocessing/model → risk result
 Dashboard       → public-safe aggregates and evaluation charts
 ```
+
+Validation, order selection, splits, and preprocessing are implemented. Training,
+evaluation, a persisted model artifact, API, and dashboard remain future work.
 
 Start with one Python package and one FastAPI service, then choose a small
 frontend after reviewing its needs with the user. There is no approved frontend

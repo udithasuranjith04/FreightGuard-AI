@@ -1,9 +1,9 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Milestones 1 and 2 are complete.
-The user authorized milestone 2 after requesting a documentation-only checkpoint
-for milestone 1. Later milestones remain a proposed sequence, not permission
-for architecture changes or model training in milestone 2.
+Created before implementation on 2026-10-28. Milestones 1–3 are complete.
+The user approved and requested commits for milestones 1 and 2, and authorized
+leakage-safe preparation in milestone 3. Later milestones remain a proposed
+sequence, not permission for architecture changes or model training yet.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -38,12 +38,21 @@ small; split a milestone into substeps if its diff becomes difficult to explain.
    Preserve the original script, including its existing lint issue, as explicitly
    requested by the user; do not apply the earlier suggested import fix to it.
 
-## Next: milestone 3 (not started)
+## Milestone 3 focused plan (completed)
 
-Implement preparation and reproducible chronological splits of eligible orders,
-with order identifiers isolated from features. Choose/document cutoff dates and
-test group disjointness and transform fitting boundaries before any model work.
-Do not train a model as part of milestone 2.
+1. Inspect date coverage and temporal distribution using aggregate evidence.
+2. Extend the validated order selector to preserve split metadata apart from X.
+3. Implement fixed chronological boundaries, whole-order isolation, and maturity gaps.
+4. Fit scaling/one-hot encoding on training inputs only; transform held-out inputs.
+5. Save aggregate metadata and add synthetic tests for leakage and reproducibility.
+6. Run dataset checks, tests, Ruff, and preservation checks; document tradeoffs.
 
-Outstanding work includes every capability in milestones 3–7. No model quality,
+## Next: milestone 4 (not started or authorized in this session)
+
+Compare a dummy baseline and simple classifier using the established splits and
+feature contract. Before training, review the temporal shift, conditional cohort,
+and label-timing limitations in `PREPARATION.md`. Reuse training-fitted transforms;
+do not tune on test performance. No prediction model was trained in milestone 3.
+
+Outstanding work includes every capability in milestones 4–7. No model quality,
 production readiness, frontend framework, or deployment target has been established.

@@ -21,7 +21,8 @@ arrival.
 
 ## Project status
 
-Repository documentation and dataset validation are complete. The baseline
+Repository documentation, dataset validation, and leakage-safe preparation are
+complete. The baseline
 problem is order-level delay prediction when the checkout shipping plan is
 finalized, conditional on the order not later being canceled. Training, FastAPI
 predictions, and a responsive dashboard are not implemented yet.
@@ -43,13 +44,17 @@ Keep the separately obtained dataset at
 ```sh
 python -m freightguard.inspect_data
 python -m freightguard.validate_data
+python -m freightguard.prepare_data
 python -m ruff check .
 python -m pytest
 ```
 
 The original inspection prints aggregate summaries. The new validator reads only
 12 approved columns, checks the dataset contract, and prints aggregate JSON with
-a dataset fingerprint. Tests use synthetic data. Full-repository lint still
+a dataset fingerprint. Preparation uses one row per order, chronological splits
+with seven-day gaps, and preprocessing fitted only on training inputs. It saves
+aggregate metadata to ignored `data/processed/preparation_metadata.json`; no
+prediction model is trained. Tests use synthetic data. Full-repository lint still
 reports the preserved inspection script's existing import-layout issue. See
 [development instructions](docs/DEVELOPMENT.md) for details and setup limitations.
 
@@ -58,6 +63,7 @@ reports the preserved inspection script's existing import-layout issue. See
 - [Agent instructions and coding standards](AGENTS.md)
 - [Current architecture and Git audit](docs/ARCHITECTURE.md)
 - [Dataset, privacy, and leakage prevention](docs/DATA_AND_ML.md)
+- [Data preparation, temporal splits, and tradeoffs](docs/PREPARATION.md)
 - [Technical decisions](docs/DECISIONS.md)
 - [Local development and deployment status](docs/DEVELOPMENT.md)
 - [Implementation milestones](docs/MILESTONES.md)

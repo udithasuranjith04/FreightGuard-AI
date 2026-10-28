@@ -2,9 +2,9 @@
 
 ## Current status
 
-Milestones 1 and 2 are complete. The project has the original local inspection
-script, a privacy-safe dataset contract/validation CLI, and synthetic tests.
-No train/test preparation pipeline, trained model, API, or frontend exists yet.
+Milestones 1–3 are complete. The project has the original inspection script,
+privacy-safe validation, chronological one-order preparation, training-only
+preprocessing, and synthetic tests. No prediction model, API, or frontend exists.
 
 ## 2026-10-28 — Milestone 1: document the baseline
 
@@ -124,3 +124,80 @@ Next is milestone 3: one-order preparation and chronological split integrity,
 with identifiers/timestamps separate from model inputs. Dataset provenance/license,
 real operational feature availability, and future cancellation selection bias
 remain limitations. No model or performance claim has been produced.
+
+## 2026-10-28 — Milestone 2 Git checkpoint
+
+At the user's explicit request, reviewed and staged exactly the ten milestone 2
+paths, alongside the pre-existing empty staged script. Used an explicit-path
+`git commit --only` to exclude that script. Commit `dabc8c9` succeeded with eight
+documentation paths, `src/freightguard/validate_data.py`, and
+`tests/test_validate_data.py`. Verified the committed path list, then confirmed
+the script's original staged blob and working SHA-256 were unchanged. No raw
+data or generated metadata was included.
+
+## 2026-10-28 — Milestone 3: leakage-safe data preparation
+
+### Focused plan
+
+1. Audit date coverage and temporal distribution using aggregate statistics only.
+2. Retain one validated eligible order and keep IDs/dates/targets separate from X.
+3. Implement fixed chronological splits, whole-order isolation, and maturity gaps.
+4. Fit scaling/encoding only on training X; safely transform held-out categories.
+5. Save reproducible aggregate metadata; test leakage, boundaries, and preservation.
+6. Update docs and explain tradeoffs before any future model training.
+
+### Changes and findings
+
+- Added `src/freightguard/prepare_data.py`: split configuration, aligned in-memory
+  split objects, train-only ColumnTransformer, CSR matrices, safe CLI, and
+  non-overwriting aggregate metadata output.
+- Extended `validate_data.py` with `eligible_orders()`; `order_features()` reuses
+  it. The helper preserves validated metadata for partitioning and sorts orders
+  deterministically, while removing post-delivery fields. Existing checks remain.
+- Added `tests/test_prepare_data.py`: synthetic tests for one-order selection,
+  exact date boundaries/gaps, isolation, label preservation, train-only statistics
+  and vocabularies, unknown categories, target independence, permutation stability,
+  invalid policies, deterministic metadata, and safe output/error behavior.
+- Updated AGENTS, README, architecture, data/ML, decisions, development, milestones,
+  and this progress file; added `docs/PREPARATION.md` with detailed tradeoffs.
+- Orders span every month from January 2015 to January 2018. Later geography is
+  narrower; a temporal holdout preserves that shift instead of mixing it away.
+- Fixed boundaries: validation 2017-01-01, test 2017-07-01, seven-day earlier-side
+  gaps. Train: 39,568 orders; validation: 9,497; test: 13,071; gap exclusions: 761.
+  Every partition contains both classes and there is no order overlap.
+- The five inputs produce 196 transformed columns. Only training inputs determine
+  scaling/vocabularies. Required missing inputs fail validation; unknown categories
+  encode safely without refitting. Metadata records only counts/schema/config/
+  versions/fingerprint/date bounds, not IDs, vocabularies, or individual records.
+- Generated ignored `data/processed/preparation_metadata.json`. No processed
+  records, fitted objects, or model artifacts were saved; no new dependencies.
+
+### Validation
+
+| Check | Final result |
+| --- | --- |
+| `python -m pytest -q` | 44 passed using synthetic data; includes all previous validation tests. |
+| Ruff on implemented modules/tests | Passed; changed Python files formatted with Ruff. |
+| `python -m ruff check .` | Exit 1 only for the preserved pre-existing `I001` in `inspect_data.py`. |
+| Full-dataset preparation | Passed: 39,568 / 9,497 / 13,071 orders, 761 gap exclusions, 196 output columns, no order overlap. |
+| Reproducibility | Shuffled full input reproduces split IDs, X/y/dates, metadata, and CSR matrix arrays exactly. Two CLI runs and the saved JSON are byte-identical. |
+| Dataset preservation/privacy | Original dataset SHA-256 unchanged; both raw CSVs and generated metadata ignored; only `.gitkeep` files tracked under data/. |
+| Script/index preservation | Original working SHA-256 and empty staged blob unchanged; only the pre-existing script remains staged. |
+| Documentation/whitespace | Relative links resolve; Markdown whitespace and both Git diff checks pass. |
+
+No classifier was trained and no predictive metrics were computed. Milestone 3
+source/tests/docs remain unstaged for review; generated metadata stays local.
+
+### Remaining risks and checkpoint
+
+Seven days exceeds the observed six-day shipping duration, but actual label
+availability is not documented. The order-to-shipping timestamp difference also
+does not exactly match the integer duration in every row; final-period censoring
+is uncertain. Historical retail data, temporal geography shift, repeat customers,
+retrospective cancellation exclusion, unverified provenance/license, and unpinned
+dependencies limit generalization and reproducibility outside this environment.
+These are documented in `PREPARATION.md`; no production accuracy is claimed.
+
+Recommended checkpoint: `feat: add leakage-safe chronological data preparation`.
+Milestone 3 remains unstaged/uncommitted. Exclude the pre-existing script and all
+local dataset/metadata files. Milestone 4 model training requires a new request.

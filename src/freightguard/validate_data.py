@@ -227,13 +227,28 @@ def validate_dataset(frame: pd.DataFrame) -> dict:
     }
 
 
+def eligible_orders(frame: pd.DataFrame) -> pd.DataFrame:
+    """Return validated unique orders with split metadata kept separate by name.
+
+    Outcomes used for auditing/cancellation checks are removed except the target.
+    Dates and identifiers are metadata, never prediction inputs.
+    """
+    orders = _eligible_rows(_validated_frame(frame)).drop_duplicates(ORDER_ID)
+    columns = [ORDER_ID, ORDER_DATE, *FEATURE_COLUMNS, TARGET]
+    return (
+        orders.loc[:, columns]
+        .sort_values([ORDER_DATE, ORDER_ID])
+        .reset_index(drop=True)
+    )
+
+
 def order_features(frame: pd.DataFrame) -> pd.DataFrame:
     """Select one row per eligible order with only the five allowed inputs.
 
     This is contract selection, not fitted preprocessing or a training pipeline.
     The output index is reset so identifiers do not accidentally become features.
     """
-    orders = _eligible_rows(_validated_frame(frame)).drop_duplicates(ORDER_ID)
+    orders = eligible_orders(frame)
     return orders.loc[:, list(FEATURE_COLUMNS)].reset_index(drop=True).copy()
 
 

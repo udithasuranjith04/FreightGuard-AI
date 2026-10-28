@@ -18,10 +18,15 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 ## Current handoff
 
-Milestones 1 (documentation) and 2 (dataset validation/problem definition) are
-complete. No training, split pipeline, API, or frontend exists yet.
+Milestones 1–3 (documentation, dataset contract, and leakage-safe preparation) are
+complete. No prediction model, API, or frontend exists yet.
 `python -m freightguard.validate_data` checks the version 1 order-level contract
 and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
+`python -m freightguard.prepare_data` creates chronological order splits and fits
+preprocessing on training inputs only. It saves ignored aggregate metadata, not
+order records or fitted objects. Read `docs/PREPARATION.md` before training work.
+Milestone 2 was committed as `dabc8c9` at the user's explicit request; milestone 3
+requires a new checkpoint after review. Do not train a model without authorization.
 `src/freightguard/inspect_data.py` is existing user work: at the initial audit its
 empty file was staged and its implementation was unstaged (`AM`). Preserve both
 states unless the user explicitly asks to change them. Check current status rather
@@ -58,6 +63,11 @@ than assuming that snapshot remains true.
 - Split before fitting preprocessing. Keep repeated order items together across
   partitions; protect a final test set. Use the same fitted preprocessing at
   training and inference. Never tune on final test results.
+- Preserve preparation v1's fixed 2017-01-01/2017-07-01 boundaries and seven-day
+  earlier-side gaps unless explicitly revising and documenting the policy. Do not
+  adjust dates to improve scores. Bump preparation version for semantic changes.
+- Keep IDs/timestamps/targets separate from `X`. Learn scaler statistics and
+  categorical vocabularies only from training; use transform-only on held-out data.
 - Use only aggregate or synthetic examples in public artifacts. Review notebooks
   and saved artifacts for embedded customer information before sharing.
 
@@ -65,6 +75,7 @@ than assuming that snapshot remains true.
 
 - `docs/ARCHITECTURE.md`: observed code, folders, dependencies, and Git history.
 - `docs/DATA_AND_ML.md`: dataset facts, privacy, leakage, and evaluation decisions.
+- `docs/PREPARATION.md`: implemented split policy, preprocessing, metadata, and risks.
 - `docs/DECISIONS.md`: accepted constraints and decisions still pending.
 - `docs/DEVELOPMENT.md`: local setup and current checks; deployment status.
 - `docs/MILESTONES.md`: incremental implementation plan and acceptance criteria.

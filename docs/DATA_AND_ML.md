@@ -59,9 +59,9 @@ late, an arrival timestamp, cancellation probability, or a delivery guarantee.
 All items in each local order agree on the target, outcomes, order timestamp,
 and five selected inputs. The validator checks that before any deduplication.
 Use one row per eligible order, so a five-item order does not count as five
-independent predictions. No split or aggregation of item-level product/price
-features is implemented. `order_features()` demonstrates safe selection of the
-five shared inputs; it does not fit preprocessing or train anything.
+independent predictions. No item-level product/price features are aggregated.
+`order_features()` selects the five shared inputs; `eligible_orders()` also keeps
+IDs/dates/labels as local metadata for the preparation module. Neither trains.
 
 After cancellation exclusions:
 
@@ -76,7 +76,8 @@ After cancellation exclusions:
 The order-level late rate is about 57.3%. Item-level totals must not be described
 as independent shipment counts. Dates parse using `%m/%d/%Y %H:%M`; order times
 span 2015-01-01 through 2018-01-31. There is no timezone metadata, so do not
-invent one. Split dates and calendar transformations remain milestone 3 work.
+invent one. Chronological splits are implemented in milestone 3; calendar features
+remain excluded. See [preparation policy](PREPARATION.md).
 
 Exclusion is retrospective: checkout cannot know a future cancellation. Any
 future dashboard must describe the risk as conditional on non-cancellation.
@@ -156,7 +157,8 @@ Run `python -m freightguard.validate_data`, optionally with `--data PATH` for a
 local CSV. Exit 0 means contract checks passed; exit 1 means validation failed.
 Successful JSON contains only aggregate counts, known schema names, date bounds,
 and the fingerprint. Errors do not echo values, rows, or local filenames.
-No processed data, reports, or artifacts are written automatically.
+The validation command writes nothing. The separate preparation command saves
+only ignored aggregate metadata, described in `PREPARATION.md`.
 
 Required columns are the five inputs plus order/item IDs, order timestamp,
 target, delivery status, order status, and actual shipping days. New/extra
@@ -174,14 +176,19 @@ selection, deterministic output, and privacy-safe errors. They require no raw
 dataset. This validates the selected contract, not all 53 source columns or
 causal realism. It is not an assertion that source outcomes are trustworthy.
 
-## Evaluation plan (not implemented)
+## Preparation and future evaluation
+
+Milestone 3 implements validated one-order selection, chronological splits at
+2017-01-01 and 2017-07-01 with seven-day earlier-side gaps, and training-only
+scaling/one-hot encoding. It preserves the five-input allowlist and integer
+0/1 target. Validation/test transformations do not fit anything. No model
+performance has been evaluated. The following rules govern future training:
 
 1. Run contract validation and select one row per non-canceled order. Keep
    identifiers/timestamps as local split metadata, separate from model inputs.
-2. Reserve a final test set before fitting anything. Prefer a chronological
-   holdout to approximate future orders, keeping whole orders in one partition.
-   Determine how to handle orders crossing the cutoff. Measure class balance
-   and document dates, sizes, and the fixed seed where randomness is used.
+2. Preserve the implemented final test interval; do not resplit based on scores.
+   Whole orders remain in one partition. Exact date boundaries, gaps, sizes,
+   and label distributions are recorded in aggregate preparation metadata.
 3. Use training/validation data for model selection and threshold choice. Fit
    imputers, encoders, scaling, feature selection, and any resampling only inside
    training partitions, ideally through a scikit-learn Pipeline/ColumnTransformer.
@@ -197,7 +204,7 @@ causal realism. It is not an assertion that source outcomes are trustworthy.
    threshold alongside the artifact. Serve the same fitted preprocessing.
 
 Tests should use invented rows to check prohibited columns, unknown categories,
-invalid inputs, and disjoint order groups across splits. No model has been
-trained, no split has been selected, and no predictive performance is claimed.
+invalid inputs, and disjoint order groups across splits. These preparation tests
+now exist. No model has been trained and no predictive performance is claimed.
 Historical retail supply-chain data may not represent real freight operations;
 the portfolio must state that limitation and avoid promising delivery guarantees.
