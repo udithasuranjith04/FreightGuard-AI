@@ -2,10 +2,11 @@
 
 ## Current status
 
-Milestones 1–4 are complete. Validation, preparation, baseline training, frozen
-evaluation, and trusted local prediction/loading exist. No API/frontend exists.
-The selected forest at 0.40 predicts all test orders late; this limitation is
-documented and no post-test retuning was performed. Milestone 4 is uncommitted.
+Milestones 1–4 and 4.1 are complete. Milestone 4 engineering is accepted and
+committed; effective alerts are not approved. Validation-only quality investigation
+is uncommitted. V1's threshold/test results remain frozen; no second test evaluation
+or refitting occurred in 4.1. No API/frontend exists. Recommendation: preserve the
+educational baseline and redesign the data/problem before operational alerts.
 
 ## 2026-10-28 — Milestone 1: document the baseline
 
@@ -293,3 +294,80 @@ Recommended checkpoint after review:
 `feat: add reproducible model training and frozen evaluation`.
 Milestone 4 remains unstaged/uncommitted; preserve the existing script and ignore
 all data/models/metadata. No API/frontend was built.
+
+## 2026-10-28 — Milestone 4 Git checkpoint
+
+At the user's request, reviewed/staged fifteen completed milestone 4 paths alongside
+the pre-existing script entry. Used explicit-path `git commit --only` to exclude
+the script. Commit `8e5410a` succeeded with exactly the fifteen approved code/test/
+documentation paths and no raw data/artifacts. Both versions of inspect_data.py
+were preserved. This accepts engineering, not effectiveness as binary alerts.
+
+## 2026-10-28 — Milestone 4.1: model quality and operational risk
+
+### Focused plan
+
+1. Snapshot frozen model/results/selection/test-guard hashes and preserve script work.
+2. Load explicitly trusted v1; discard later rows before train/validation validation.
+3. Examine validation score distributions, calibration, class errors, within-mode
+   ranking, fixed threshold tradeoffs, and tie-aware capacity scenarios.
+4. Compare training-only shipping-plan frequency references and grouped sensitivity.
+5. Add reproducible diagnostics and synthetic tests; verify no fitting/test predictions
+   or changes to the frozen threshold/results. Document an honest recommendation.
+
+### Changes and validation-only findings
+
+- Added `src/freightguard/diagnose_model.py`, `tests/test_diagnose_model.py`, and
+  `docs/MODEL_QUALITY.md`; updated AGENTS, README, architecture, decisions,
+  development, milestones, training follow-up, and this progress report.
+- No existing model/training/evaluation code or dependency was changed. Separate
+  ignored aggregate report: `data/processed/diagnostics/v1_validation.json`.
+- All analysis uses 9,497 validation orders; frequency references use 39,568
+  training orders. Original evaluation results are only preserved by identity;
+  no new test probabilities or test performance are computed.
+- At frozen 0.40, validation alert rate is 96.31%, FPR 94.25%, FNR 2.10%. Most
+  not-late scores cluster above 0.40. Mean calibration errors vary by shipping mode.
+- Within-mode ROC-AUC: Same Day 0.5003, Second Class 0.5078, Standard Class 0.5108.
+  First Class has 1,429 validation orders, all late, so within-mode AUC is undefined.
+- Top 10% (K=950): precision 100%, recall 17.67%, lift 1.7669 versus uniform review.
+  The training-derived mode rule achieves the same. Top 20% (K=1900): forest
+  precision 94.92%, recall 33.55%, lift 1.6771; mode rule precision 94.74%.
+- Shipping mode explains 99.65% of frozen score variance on validation. Grouped
+  shipping-plan permutation drops PR-AUC by 0.2596 on average; geography by 0.0013.
+  These are descriptive sensitivity checks, not causality or new trained models.
+- Boundary ties use uniform fractional expected credit and precision bounds,
+  not favorable row ordering. Capacity scenarios and thresholds are exploratory;
+  none is selected as a new model setting or evaluated on test.
+
+### Checks and preservation
+
+| Check | Final result |
+| --- | --- |
+| `python -m pytest -q` | 71 passed; synthetic data, no private dataset required. |
+| Ruff on implemented modules/tests | Passed; new diagnostics files formatted. |
+| Full-repository Ruff | Only preserved pre-existing I001 in inspect_data.py; exit 1. |
+| Full-data reproducibility | Two diagnostic runs produce identical objects and byte-identical saved aggregate JSON. |
+| No fitting/test predictions | Guarded real runs block Pipeline/forest fitting and assert all 22 scoring calls contain only 9,497 validation rows (base plus grouped permutations). |
+| Frozen preservation | All four model-run file SHA-256 values match the pre-milestone snapshots; threshold remains 0.40. Script working SHA-256 and staged empty blob unchanged. |
+| Privacy/Git | Raw data, original model files, and separate diagnostics output remain ignored; only .gitkeep files tracked under data/. Only the pre-existing script is staged. |
+| Documentation/whitespace | Relative links resolve; Markdown and both Git whitespace checks pass. |
+
+No second test evaluation was authorized or performed. No classifier or
+preprocessing refit occurred in the real diagnostic runs.
+
+### Recommendation and next checkpoint
+
+Redesign the operational prediction problem/data before selective alerts. Keep v1
+as an educational demonstration of honest model evaluation. A hypothetical 10%
+review budget (20% scenario) illustrates capacity planning, but near-identical
+service-plan reference performance does not justify promoting the forest as an
+ML alerting improvement. Within-mode ranking is weak and validation has been reused.
+
+Seek actionable timestamped pre-dispatch signals and a prospective holdout with
+clear promised/actual outcomes and label availability. Predefine review capacity,
+costs, and cancellation handling; request approval before implementing a redesign.
+Do not tune on the original test or claim improved test performance.
+
+Recommended checkpoint: `feat: add validation-only model quality diagnostics`.
+Milestone 4.1 remains unstaged/uncommitted. Preserve inspect_data.py, all frozen
+run files, and local data; no API/frontend work was performed.

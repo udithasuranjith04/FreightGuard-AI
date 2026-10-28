@@ -29,6 +29,12 @@ selected on validation, but its frozen threshold predicts every test order late;
 this limits its usefulness for selective alerts. FastAPI and the dashboard are
 not implemented yet. See the full [evaluation and limitations](docs/TRAINING.md).
 
+The engineering implementation is accepted; effective binary alerts are not.
+Validation-only investigation shows that strong top-10% precision matches a simple
+shipping-mode rule and within-mode ranking is near chance. We recommend retaining
+v1 as an educational demonstration and redesigning the data/problem before
+operational use. See [model quality and review policies](docs/MODEL_QUALITY.md).
+
 ## Local development
 
 Use Python 3.12. From the repository root, activate your existing environment
@@ -71,6 +77,7 @@ reports the preserved inspection script's existing import-layout issue. See
 - [Dataset, privacy, and leakage prevention](docs/DATA_AND_ML.md)
 - [Data preparation, temporal splits, and tradeoffs](docs/PREPARATION.md)
 - [Model selection, evaluation, trusted loading, and limitations](docs/TRAINING.md)
+- [Validation-only quality investigation and recommendations](docs/MODEL_QUALITY.md)
 - [Technical decisions](docs/DECISIONS.md)
 - [Local development and deployment status](docs/DEVELOPMENT.md)
 - [Implementation milestones](docs/MILESTONES.md)

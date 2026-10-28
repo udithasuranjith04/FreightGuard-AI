@@ -1,9 +1,9 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Milestones 1–4 are complete.
-The user approved/requested commits for milestones 1–3, and authorized fixed
-model training/evaluation in milestone 4. Milestone 4 remains uncommitted for
-review. API/frontend work is not authorized in this session.
+Created before implementation on 2026-10-28. Milestones 1–4 and 4.1 are complete.
+The user requested commits for milestones 1–4, accepting milestone 4 engineering
+but rejecting approval as effective alerts. Milestone 4.1 is an uncommitted
+validation-only investigation. API/frontend work is not authorized in this session.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -17,6 +17,7 @@ before destructive actions or major architecture changes.
 | 2. Data contract and safe validation | Define prediction time, row/group unit, cancellation policy, feature allowlist, schema checks, and clear local input errors. | Synthetic tests reject invalid labels, missing required fields, and unsafe inputs; aggregate report uses no personal values; lint/checks pass. |
 | 3. Preparation and split integrity | Implement reusable safe preprocessing and reproducible train/validation/test partitioning. | Whole orders stay within partitions; temporal policy is tested; fitted transforms use training data only; dataset stays local. |
 | 4. Baseline training and evaluation | Compare dummy and simple classifier pipelines; save reviewed pipeline and metrics. | Reproducible command, held-out evaluation, confusion matrix and useful metrics/charts, leakage review, artifact metadata and documented limitations. |
+| 4.1. Quality and operational risk | Investigate frozen-model validation scores, calibration, within-mode ranking, capacity policies, and service-plan references. | No refitting/retesting/threshold edits; reproducible aggregate diagnostics/tests; honest recommendation and frozen-file preservation. |
 | 5. FastAPI predictions | Add validated request/response schemas, artifact loading, health check, prediction endpoint, and privacy-safe logging. | Tests cover valid/invalid synthetic requests, unavailable model, and training/inference feature agreement; documented local run command. |
 | 6. Responsive dashboard | Choose a simple frontend; add shipment form, risk result, model limitations, and aggregate/evaluation charts. | Works on mobile/desktop, validates inputs, handles loading/API failures accessibly, and displays no customer records; frontend checks and API smoke check pass. |
 | 7. Reproducibility and deployment | Review dependency reproducibility, integrate appropriate automated checks, document local full-stack setup and selected hosting. | Clean setup/build/start instructions verified, end-to-end synthetic prediction checked, health/error logging verified, no data/secrets shipped; deployment instructions and portfolio README complete. |
@@ -56,7 +57,24 @@ small; split a milestone into substeps if its diff becomes difficult to explain.
 5. Save versioned ignored artifacts, strict trusted loading, schema tests and logs.
 6. Run checks and document the all-late final operating point without retuning.
 
-## Next: milestone 5 (not started)
+## Milestone 4.1 focused plan (completed)
+
+1. Preserve/commit accepted milestone 4 engineering and snapshot all frozen hashes.
+2. Load only train/validation cohorts and explicitly trusted frozen pipeline.
+3. Diagnose score distributions, calibration, class errors, and within-mode ranking.
+4. Compare fixed capacity scenarios against training-only service-plan rates;
+   handle ties without arbitrary label-aware selection.
+5. Test grouped sensitivity and reproducibility with no fitting/test predictions.
+6. Document an illustrative review policy and recommend redesign for useful alerts.
+
+## Next decision (no further implementation authorized)
+
+Review the quality investigation. The recommendation is to preserve the educational
+v1 and redesign the operational data/problem with a fresh evaluation plan before
+promoting selective alerts. Do not implement a redesign or conduct a second test
+evaluation without approval.
+
+## Milestone 5 (not started)
 
 FastAPI work requires a new request. Reuse the frozen pipeline/schema/loading
 rules and display research limitations honestly. The selected threshold predicts

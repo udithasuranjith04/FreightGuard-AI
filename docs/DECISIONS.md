@@ -26,6 +26,10 @@ sessions do not mistake the roadmap for delivered functionality.
 | Calibration diagnostics only | Implemented in milestone 4 | Brier/log loss/reliability bins; no calibrator fitted on reused validation data. |
 | Versioned local joblib pipeline | Implemented in milestone 4 | Ignored artifacts; explicit local trust plus checksum/version/schema checks before use; no automatic deserialization. |
 | One final test prediction and immutable replay | Implemented in milestone 4 | Frozen selection and exclusive marker precede test; completed runs replay saved aggregates. |
+| Engineering accepted; binary alert effectiveness rejected | Milestone 4 review | Professional implementation does not establish useful selective alerts. Original metrics remain unchanged. |
+| Validation-only investigation | Implemented in milestone 4.1 | No refitting or test predictions; train-only frequency references, tie-aware capacity statistics, within-mode diagnostics, grouped permutation sensitivity. |
+| No promotion of top-K as ML improvement | Milestone 4.1 recommendation | Top-10% precision matches mode reference; top-20% gain is ~0.18 percentage points on reused validation only. |
+| Redesign before operational alerts | Recommendation, not implemented | Seek actionable point-in-time signals and a fresh evaluation plan. Preserve v1 as educational evidence. |
 
 ## Open decisions
 

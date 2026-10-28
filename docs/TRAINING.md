@@ -237,4 +237,12 @@ five fields. The selected threshold is too broad to prioritize interventions.
 Future work needs an explicit alert cost/capacity objective, suitable additional
 pre-dispatch information, and a fresh evaluation plan—not more tuning on this test.
 
-No API/frontend was built. Milestone 4 remains uncommitted for user review.
+No API/frontend was built. Milestone 4 engineering was subsequently accepted and
+committed as `8e5410a`; the model was not approved as effective binary alerts.
+
+## Follow-up review: milestone 4.1
+
+[Validation-only quality diagnostics](MODEL_QUALITY.md) investigate within-mode
+ranking and capacity policies using the frozen model. These are exploratory
+validation results, separate from the final test above. No threshold or original
+test metric was changed; no second test prediction/evaluation was performed.

@@ -107,6 +107,21 @@ Loading requires an explicitly trusted local artifact and verified SHA-256.
 Never deserialize an uploaded/downloaded model automatically. Prediction accepts
 exactly the five approved fields and rejects sensitive/extra columns.
 
+## Validation-only quality investigation
+
+```sh
+python -m freightguard.diagnose_model \
+  --trust-local-model \
+  --expected-model-sha256 e3d46fa78998d13584ed7d7ea88bd321c69e2773aa9b6f18eab20eee73d0ddef
+```
+
+The command requires the original local v1 artifact and matching dataset. It never
+fits/refits and never predicts the test period. It saves separate aggregate JSON
+to ignored `data/processed/diagnostics/v1_validation.json`; identical reruns leave
+it unchanged. Frozen run files and threshold are not edited. See
+[quality findings](MODEL_QUALITY.md) for definitions, tie handling, and limitations.
+No proposed review policy is validated on test or automatically enabled.
+
 ## Checks
 
 ```sh
@@ -126,7 +141,7 @@ at the user's explicit request. Do not change it merely to make lint green.
 To check only the new code:
 
 ```sh
-python -m ruff check src/freightguard/validate_data.py src/freightguard/prepare_data.py src/freightguard/evaluation.py src/freightguard/model_artifact.py src/freightguard/train_model.py tests/
+python -m ruff check src/freightguard/validate_data.py src/freightguard/prepare_data.py src/freightguard/evaluation.py src/freightguard/model_artifact.py src/freightguard/train_model.py src/freightguard/diagnose_model.py tests/
 python -m pytest -q
 ```
 
@@ -170,11 +185,13 @@ Milestone 2 was subsequently committed as `dabc8c9`, containing only the ten
 approved implementation/test/documentation files; script preservation was verified.
 Milestone 3 was subsequently committed as `b50039b`, containing twelve approved
 code/test/documentation paths; both script versions remain unchanged.
-Milestone 4 remains uncommitted pending the user's review of the reported results.
-Suggested checkpoint: `feat: add reproducible model training and frozen evaluation`.
-Stage only its three new modules, training tests, `pyproject.toml`, and affected
-documentation (including `docs/TRAINING.md`); use an explicit-path commit to
-exclude the preserved script. Never stage generated models/metadata or raw data.
+Milestone 4 was committed as `8e5410a`, containing only its fifteen code/test/doc
+paths. Its engineering was accepted, but alert effectiveness was not approved.
+Milestone 4.1 remains uncommitted for review. Suggested checkpoint:
+`feat: add validation-only model quality diagnostics`.
+Stage only its new diagnostics module/tests and affected documentation (including
+`docs/MODEL_QUALITY.md`); use an explicit-path commit to exclude the preserved
+script. Never stage generated models/metadata or raw data.
 
 ## Deployment status
 

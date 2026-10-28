@@ -18,19 +18,28 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 ## Current handoff
 
-Milestones 1–4 (documentation, validation, preparation, and model evaluation) are
-complete. API and frontend do not exist yet.
+Milestones 1–4 and 4.1 (validation-only quality investigation) are complete.
+Milestone 4 engineering is accepted; the model is not approved as effective binary
+alerts. API and frontend do not exist yet.
 `python -m freightguard.validate_data` checks the version 1 order-level contract
 and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
 `python -m freightguard.prepare_data` creates chronological order splits and fits
 preprocessing on training inputs only. It saves ignored aggregate metadata, not
 order records or fitted objects. Read `docs/PREPARATION.md` before training work.
 Milestones 2/3 were committed as `dabc8c9`/`b50039b` at the user's explicit request.
-Milestone 4 is uncommitted for review. Frozen local v1 artifacts live under ignored
+Milestone 4 was committed as `8e5410a`; milestone 4.1 remains uncommitted for review.
+Frozen local v1 artifacts live under ignored
 `data/processed/models/v1/`. Read `docs/TRAINING.md` before using them.
 Random Forest at 0.40 was selected on validation; final test was evaluated once.
 It predicts every test order late at that threshold. Report this limitation honestly.
 Do not change model/threshold or retest to improve the frozen result.
+Read `docs/MODEL_QUALITY.md`: top-10% validation precision matches a simple shipping
+mode rule, and within-mode ranking is near chance. The recommendation is to redesign
+the data/problem for operational alerts while preserving v1 as an educational demo.
+Diagnostics require explicit local trust/hash, discard test-period outcomes, do
+not fit anything, and save separate ignored validation aggregates. No alternate
+threshold or top-K policy has test approval. A second test evaluation needs explicit
+user approval; do not bypass this restriction through a new run directory.
 `src/freightguard/inspect_data.py` is existing user work: at the initial audit its
 empty file was staged and its implementation was unstaged (`AM`). Preserve both
 states unless the user explicitly asks to change them. Check current status rather
@@ -87,6 +96,7 @@ than assuming that snapshot remains true.
 - `docs/DATA_AND_ML.md`: dataset facts, privacy, leakage, and evaluation decisions.
 - `docs/PREPARATION.md`: implemented split policy, preprocessing, metadata, and risks.
 - `docs/TRAINING.md`: frozen model selection, final metrics, loading, and limitations.
+- `docs/MODEL_QUALITY.md`: validation-only diagnostics, capacity policies, recommendation.
 - `docs/DECISIONS.md`: accepted constraints and decisions still pending.
 - `docs/DEVELOPMENT.md`: local setup and current checks; deployment status.
 - `docs/MILESTONES.md`: incremental implementation plan and acceptance criteria.

@@ -18,7 +18,8 @@ FreightGuard-AI/
 │   ├── prepare_data.py         chronological splits and training-only transforms
 │   ├── evaluation.py           aggregate metrics, calibration, and subgroups
 │   ├── train_model.py          fixed candidates, selection, and one final test
-│   └── model_artifact.py       explicit trusted loading and strict predictions
+│   ├── model_artifact.py       explicit trusted loading and strict predictions
+│   └── diagnose_model.py       frozen-model validation-only quality diagnostics
 ├── data/
 │   ├── raw/                   ignored DataCo CSVs, tracked .gitkeep
 │   └── processed/             ignored metadata/models/v1, tracked .gitkeep
@@ -74,6 +75,13 @@ call; all test aggregates reuse it. Completed runs replay JSON after identity an
 checksum checks, without deserialization. The trusted loader and strict five-input
 batch prediction interface are available for future API work. See `TRAINING.md`.
 
+Milestone 4.1 adds a separate diagnostic module, with no edits to training or the
+frozen artifact/results. It discards later data before outcome validation, accepts
+only train/validation split objects, and never fits a model. It loads the explicitly
+trusted frozen pipeline, computes aggregate risk/calibration/capacity/within-mode
+diagnostics and training-frequency references, and saves a separate ignored report
+under `data/processed/diagnostics/`. Frozen file hashes are checked before/after.
+
 ## Dependencies and tooling
 
 The package is `freightguard-ai` version `0.1.0`, built with setuptools (`>=68`)
@@ -102,7 +110,7 @@ subgroup, schema/loading, and trust/checksum tests using synthetic data.
 ## Git audit
 
 The initial audit had two commits on `main` (also locally referenced by
-`origin/main`; no fetch was performed). The requested checkpoints add three local
+`origin/main`; no fetch was performed). The requested checkpoints add four local
 commits:
 
 | Commit | Change |
@@ -112,6 +120,7 @@ commits:
 | `13a711f` | Milestone 1: eight documentation files only; user script excluded. |
 | `dabc8c9` | Milestone 2: validation, tests, and documentation; user script excluded. |
 | `b50039b` | Milestone 3: preparation, tests, and documentation; user script excluded. |
+| `8e5410a` | Milestone 4: training/evaluation engineering, tests, docs; no script/data/artifacts. |
 
 No raw dataset files appear in those commits' file lists. The existing ignore
 rules cover raw/processed contents except `.gitkeep`, `.env`, environments,
