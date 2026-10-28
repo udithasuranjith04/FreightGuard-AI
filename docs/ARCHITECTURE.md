@@ -13,11 +13,12 @@ FreightGuard-AI/
 ├── main.py                    original PyCharm greeting example
 ├── src/freightguard/
 │   ├── __init__.py             empty package marker
-│   └── inspect_data.py         local aggregate dataset inspection
+│   ├── inspect_data.py         local aggregate dataset inspection
+│   └── validate_data.py        version 1 dataset contract and aggregate CLI
 ├── data/
 │   ├── raw/                   ignored DataCo CSVs, tracked .gitkeep
 │   └── processed/             only .gitkeep at audit
-├── tests/                     only .gitkeep; no tests yet
+├── tests/                     synthetic validation tests and .gitkeep
 ├── docs/                      project documentation added in milestone 1
 ├── app/                       empty local placeholder
 └── notebooks/                 empty local placeholder
@@ -44,6 +45,14 @@ train a model, create output files, validate a full schema, or handle missing
 files/columns with custom errors. `main.py` only prints a sample greeting; it is
 not an application entry point.
 
+Milestone 2 adds `validate_data.py` without changing the original inspection
+script. It loads only 12 approved audit columns, validates types and order-level
+consistency, excludes canceled shipping outcomes, and emits deterministic
+aggregate JSON plus a SHA-256 of the input CSV. Invalid data produces a safe
+error and nonzero exit status. `order_features()` returns only the five allowed
+inputs, one row per eligible order, with identifiers removed. It fits nothing
+and writes no data/artifacts. Tests use invented records and temporary CSVs.
+
 ## Dependencies and tooling
 
 The package is `freightguard-ai` version `0.1.0`, built with setuptools (`>=68`)
@@ -59,16 +68,20 @@ or a guarantee about a fresh installation.
 Pytest searches `tests/`; Ruff's configured line length is 88.
 FastAPI, an ASGI server, frontend packages, logging configuration, CI,
 deployment configuration, models, and evaluation reports are absent.
+Synthetic pytest coverage now exists for the dataset contract; the original
+milestone 1 observation that no tests existed is superseded by milestone 2.
 
 ## Git audit
 
-The available history has two commits on `main` (also locally referenced by
-`origin/main`; no fetch was performed):
+The initial audit had two commits on `main` (also locally referenced by
+`origin/main`; no fetch was performed). The requested documentation checkpoint
+adds the third local commit:
 
 | Commit | Change |
 | --- | --- |
 | `fe2755e` | Initial Python project foundation; included generated package metadata. |
 | `35d1b66` | Removed generated package metadata from tracking and ignored `*.egg-info/`. |
+| `13a711f` | Milestone 1: eight documentation files only; user script excluded. |
 
 No raw dataset files appear in those commits' file lists. The existing ignore
 rules cover raw/processed contents except `.gitkeep`, `.env`, environments,
@@ -77,7 +90,8 @@ IDE state, and common caches. They are not a general secret scanner.
 Before this documentation milestone, the only working change was
 `AM src/freightguard/inspect_data.py`: an empty staged file and a 57-line
 unstaged implementation. No code, index entries, or history were changed during
-the documentation milestone.
+the documentation milestone. Commit `13a711f` was later explicitly requested
+and verified; it preserved that script's staged blob and working checksum.
 
 ## Intended direction (not implemented)
 

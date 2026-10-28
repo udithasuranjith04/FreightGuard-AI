@@ -21,9 +21,10 @@ arrival.
 
 ## Project status
 
-Foundation and repository documentation complete. The existing Python inspection
-script summarizes the local DataCo dataset. Training, FastAPI predictions, and a
-responsive dashboard are planned; they are not implemented yet.
+Repository documentation and dataset validation are complete. The baseline
+problem is order-level delay prediction when the checkout shipping plan is
+finalized, conditional on the order not later being canceled. Training, FastAPI
+predictions, and a responsive dashboard are not implemented yet.
 
 ## Local development
 
@@ -41,12 +42,15 @@ Keep the separately obtained dataset at
 
 ```sh
 python -m freightguard.inspect_data
+python -m freightguard.validate_data
 python -m ruff check .
 python -m pytest
 ```
 
-The inspection prints aggregate summaries. Current checks report one existing
-import-layout lint issue and no collected tests. See
+The original inspection prints aggregate summaries. The new validator reads only
+12 approved columns, checks the dataset contract, and prints aggregate JSON with
+a dataset fingerprint. Tests use synthetic data. Full-repository lint still
+reports the preserved inspection script's existing import-layout issue. See
 [development instructions](docs/DEVELOPMENT.md) for details and setup limitations.
 
 ## Project documentation
@@ -61,9 +65,9 @@ import-layout lint issue and no collected tests. See
 
 ## Data and limitations
 
-The local dataset is DataCo Smart Supply Chain. The candidate target is
-`Late_delivery_risk`; feature selection, cancellation handling, and evaluation
-are documented as pending decisions. Never commit raw customer records,
+The local dataset is DataCo Smart Supply Chain. The target is `Late_delivery_risk`
+for non-canceled orders; the five allowed inputs and evaluation plan are documented
+in the data contract. Never commit raw customer records,
 credentials, or secrets. Sensitive personal fields and delivery outcomes must
 not become prediction inputs. Raw and processed data are ignored by Git.
 

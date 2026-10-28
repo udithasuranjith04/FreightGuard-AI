@@ -13,9 +13,14 @@ license have not been verified; record provenance and confirm terms before any
 public redistribution. This audit used local files only.
 
 The fields include order items, products, commercial amounts, locations,
-timestamps, shipping mode, customer information, and observed outcomes. Treat
-rows as order-item observations until grouping is validated; do not assume one
-row equals one shipment. Preserve raw files unchanged.
+timestamps, shipping mode, customer information, and observed outcomes. Rows are
+order-item observations: 180,519 unique item IDs belong to 65,752 unique orders.
+There are 45,902 multi-item orders and 114,767 repeated order-ID rows. These are
+not duplicate shipments to discard blindly. Preserve raw files unchanged.
+
+Milestone 2 fingerprint (SHA-256):
+`fa6d022ed437155e1a2f0378710602848703c8a7f203f7ff5d77805bf8480aa6`.
+The validation CLI recomputes this fingerprint without publishing file contents.
 
 The local dictionary defines `Late_delivery_risk` as 1 for late and 0 for not
 late. The existing inspection script reports:
@@ -28,14 +33,56 @@ late. The existing inspection script reports:
 | Missing `Product Description` | 180,519 |
 | Missing `Order Zipcode` | 155,679 |
 
-Some customer fields also contain missing values; they remain excluded rather
-than being repaired for modeling. Zero identical rows does not establish that
-orders or customers are unique.
+The original full-file inspection also found 8 missing customer last names and
+3 missing customer postal codes; these fields remain excluded. All 12 columns
+used by the new validator have zero missing values. It rejects missing required
+fields, invalid integers/dates, unknown shipping/status categories, and duplicate
+item IDs. It deliberately does not load the excluded personal fields. Missing
+excluded-column totals above come from the original inspection, not the new CLI.
 
 Every row with `Delivery Status = Late delivery` has label 1; the other delivery
 statuses have label 0. In particular, 7,754 canceled shipments are labeled 0.
-This is an outcome-definition issue: decide whether to exclude cancellations
-from the prediction cohort before splitting or training. Document that rule.
+Contract v1 excludes those rows before any future splitting or training.
+Of them, 3,692 have `Order Status = CANCELED` and 4,062 have
+`Order Status = SUSPECTED_FRAUD`. The cancellation rule is delivery status
+`Shipping canceled` OR either of those order statuses. The validator requires
+these indicators to agree in this dataset, and fails if that assumption changes.
+
+## ML problem definition: contract version 1
+
+Predict **whether one order will exceed its scheduled shipping duration**, at
+the moment its checkout shipping plan is finalized, before dispatch. The target
+is the dataset's binary `Late_delivery_risk`, conditional on that order eventually
+being non-canceled. This is a classification problem, not an estimate of days
+late, an arrival timestamp, cancellation probability, or a delivery guarantee.
+
+All items in each local order agree on the target, outcomes, order timestamp,
+and five selected inputs. The validator checks that before any deduplication.
+Use one row per eligible order, so a five-item order does not count as five
+independent predictions. No split or aggregation of item-level product/price
+features is implemented. `order_features()` demonstrates safe selection of the
+five shared inputs; it does not fit preprocessing or train anything.
+
+After cancellation exclusions:
+
+| Aggregate | Count |
+| --- | ---: |
+| Excluded orders | 2,855 |
+| Eligible item rows | 172,765 |
+| Eligible unique orders | 62,897 |
+| Late item rows / not-late item rows | 98,977 / 73,788 |
+| Late orders / not-late orders | 36,048 / 26,849 |
+
+The order-level late rate is about 57.3%. Item-level totals must not be described
+as independent shipment counts. Dates parse using `%m/%d/%Y %H:%M`; order times
+span 2015-01-01 through 2018-01-31. There is no timezone metadata, so do not
+invent one. Split dates and calendar transformations remain milestone 3 work.
+
+Exclusion is retrospective: checkout cannot know a future cancellation. Any
+future dashboard must describe the risk as conditional on non-cancellation.
+The historical cohort can introduce selection bias and does not establish
+performance on all new orders. Snapshot statuses such as `PENDING` can coexist
+with delivery outcomes; they are not reliable evidence of event-time availability.
 
 ## Privacy policy
 
@@ -63,31 +110,74 @@ encoders and reports for retained values before publishing artifacts.
 
 ## Prediction time and leakage
 
-Proposed baseline: predict at order placement, before shipment or delivery.
-This needs confirmation in the data-contract milestone. A feature is eligible
-only if its value would already be available at that time.
+Contract v1 allows exactly these five shared order fields:
+
+| Input | Availability assumption at finalized checkout |
+| --- | --- |
+| `Days for shipment (scheduled)` | Planned shipping allowance has been assigned; zero is valid for same-day service. |
+| `Shipping Mode` | Customer/service shipping choice is finalized. |
+| `Market` | Broad destination market is known. |
+| `Order Region` | Broad destination region is known. |
+| `Order Country` | Destination country is known. |
+
+These are operational assumptions, not event-history facts proven by the
+dataset. If a real system assigns the shipping plan later, move prediction to
+that point or revise the allowlist. Do not silently substitute actual duration.
+
+Every source column has a defined treatment below. The API will eventually need
+only the five inputs; validation uses seven additional columns locally.
 
 | Field/group | Baseline treatment and reason |
 | --- | --- |
 | `Late_delivery_risk` | Target only; never a feature. |
 | `Delivery Status` | Exclude; directly reveals the target in the local data. |
 | `Days for shipping (real)` | Exclude; observed shipping outcome. |
-| `shipping date (DateOrders)` | Exclude for order-time prediction; future event. |
+| `shipping date (DateOrders)` | Exclude; dispatch happens after finalized checkout. |
 | `Order Status` | Exclude initially; includes lifecycle outcomes and cancellations. |
-| Profit, benefit, and customer sales aggregates | Exclude until their calculation window and availability are established. |
-| `Days for shipment (scheduled)`, `Shipping Mode` | Candidates only if confirmed known at order placement. |
-| Broad destination geography, product category, quantity, price/discount | Candidates subject to privacy and availability review. |
-| `order date (DateOrders)` | Candidate calendar features and time splitting after parsing/validating dates. |
+| `Days for shipment (scheduled)`, `Shipping Mode`, `Market`, `Order Region`, `Order Country` | Allowed inputs, subject to the checkout assumptions above. |
+| `order date (DateOrders)` | Audit/split metadata only; calendar features deferred. |
+| `Order Id`, `Order Item Id` | Local grouping/uniqueness metadata only; never features. |
+| `Customer City`, `Customer Country`, `Customer Email`, `Customer Fname`, `Customer Id`, `Customer Lname`, `Customer Password`, `Customer Segment`, `Customer State`, `Customer Street`, `Customer Zipcode`, `Order Customer Id` | Exclude all customer-specific fields and identifiers under the conservative privacy policy. |
+| `Latitude`, `Longitude`, `Order City`, `Order State`, `Order Zipcode` | Exclude precise/fine-grained geography. |
+| `Type`, `Benefit per order`, `Sales per customer`, `Sales`, `Order Profit Per Order`, `Order Item Profit Ratio` | Exclude transaction/profit/aggregate fields; timing and meaning insufficiently established. |
+| `Category Id`, `Category Name`, `Department Id`, `Department Name`, `Order Item Cardprod Id`, `Order Item Discount`, `Order Item Discount Rate`, `Order Item Product Price`, `Order Item Quantity`, `Order Item Total`, `Product Card Id`, `Product Category Id`, `Product Description`, `Product Image`, `Product Name`, `Product Price`, `Product Status` | Exclude item/product-specific fields from the order-level baseline; do not invent aggregation or stock timing. |
 
-The allowlist is not implemented. Do not interpret this table as approval to
-train on every remaining numeric field. Very high model scores must trigger a
-leakage review before being presented as a success.
+The allowlist is implemented in `FEATURE_COLUMNS`; all other columns are
+excluded by explicit selection. Among the 172,765 non-canceled item rows,
+`actual days > scheduled days` matches the label exactly (zero mismatches).
+Across the raw dataset there are 4,423 mismatches, all in canceled observations.
+Thus actual duration and delivery status expose the answer, rather than being
+useful early-warning inputs. The validator checks these relationships for drift.
+Very high future scores still require a leakage review.
+
+## Reproducible validation
+
+Run `python -m freightguard.validate_data`, optionally with `--data PATH` for a
+local CSV. Exit 0 means contract checks passed; exit 1 means validation failed.
+Successful JSON contains only aggregate counts, known schema names, date bounds,
+and the fingerprint. Errors do not echo values, rows, or local filenames.
+No processed data, reports, or artifacts are written automatically.
+
+Required columns are the five inputs plus order/item IDs, order timestamp,
+target, delivery status, order status, and actual shipping days. New/extra
+columns are ignored, never automatically made into features. Required values
+cannot be null; geography text cannot be blank; scheduled/actual days and IDs
+must be finite nonnegative integers (IDs positive); item IDs must be unique;
+known status/shipping categories are checked. Whole-order consistency, binary
+labels, cancellation agreement, and outcome relationships are checked. At least
+one non-canceled order must remain. Both target counts are always reported;
+future training must ensure each split supports its chosen metrics.
+
+Synthetic tests cover invalid schemas/types/dates/labels, missing data, repeated
+items, conflicting order fields/outcomes, canceled/fraud exclusions, safe feature
+selection, deterministic output, and privacy-safe errors. They require no raw
+dataset. This validates the selected contract, not all 53 source columns or
+causal realism. It is not an assertion that source outcomes are trustworthy.
 
 ## Evaluation plan (not implemented)
 
-1. Validate schema, label values, dates, and order grouping; settle cancellation
-   handling and the prediction unit. Check whether all items within an order
-   share a consistent target and relevant attributes.
+1. Run contract validation and select one row per non-canceled order. Keep
+   identifiers/timestamps as local split metadata, separate from model inputs.
 2. Reserve a final test set before fitting anything. Prefer a chronological
    holdout to approximate future orders, keeping whole orders in one partition.
    Determine how to handle orders crossing the cutoff. Measure class balance

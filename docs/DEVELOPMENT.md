@@ -44,6 +44,20 @@ It prints aggregate counts and schema information, reads personal columns into
 memory, and writes no output files. Do not replace the summaries with raw samples.
 There is no web application or prediction command yet.
 
+## Run dataset contract validation
+
+```sh
+python -m freightguard.validate_data
+# Optional: validate a different local DataCo-format CSV.
+python -m freightguard.validate_data --data /path/to/local/dataset.csv
+```
+
+This command loads only the 12 approved audit fields (no customer columns), checks
+the order-level contract, and prints deterministic aggregate JSON and a SHA-256
+fingerprint. It exits 1 with a sanitized error if required data is invalid; it
+does not train, split, or write any processed files. The exact five allowed
+features and cancellation policy are in `DATA_AND_ML.md`.
+
 ## Checks
 
 ```sh
@@ -55,12 +69,17 @@ git status --short
 git check-ignore data/raw/DataCoSupplyChainDataset.csv data/processed/example.csv .env
 ```
 
-At milestone 1, the inspection script succeeds, Ruff reports an existing `I001`
-import-layout issue in `inspect_data.py`, and pytest exits 5 because no tests
-exist. Neither lint nor automated behavior coverage is currently green. Do not
-run auto-fixes against user work as part of documentation-only changes. The
-next data-validation milestone should add meaningful synthetic-data tests and
-resolve lint with an explained, focused code change.
+At milestone 2, synthetic dataset-validation tests pass without the raw dataset.
+Ruff passes on the new module and tests; full-repository Ruff still reports the
+existing `I001` import-layout issue in `inspect_data.py`. That script is preserved
+at the user's explicit request. Do not change it merely to make lint green.
+
+To check only the new code:
+
+```sh
+python -m ruff check src/freightguard/validate_data.py tests/test_validate_data.py
+python -m pytest -q
+```
 
 For documentation-only work, verify relative links, required files, whitespace,
 and preservation of source/configuration files. Re-running the full dataset
@@ -94,6 +113,14 @@ git commit --only -m "docs: document project baseline and development milestones
 These are recommended manual commands, not actions performed by Codex. Review
 the staged script separately before creating its own checkpoint. Never use
 `git add -f` for customer data.
+
+The milestone 1 checkpoint was explicitly requested afterward and completed as
+`13a711f`, with exactly the eight documentation paths above and no script. The
+script's staged empty blob and unstaged implementation were verified unchanged.
+Milestone 2 changes remain uncommitted. Suggested checkpoint message:
+`feat: validate dataset and define order delay prediction contract`.
+Review/stage only its new module/tests and changed documentation; exclude the
+preserved script with an explicit-path commit as above.
 
 ## Deployment status
 

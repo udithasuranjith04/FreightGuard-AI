@@ -9,19 +9,21 @@ sessions do not mistake the roadmap for delivered functionality.
 | pandas, NumPy, scikit-learn | Existing | Already declared; sufficient for a small initial ML pipeline. |
 | pytest and Ruff | Existing | Already declared developer tools. |
 | Raw/processed data remain local and ignored | Required | Protect customer information and keep data out of Git. |
-| Explicit safe feature allowlist and fitted preprocessing pipeline | Required for training | Prevent sensitive inputs, leakage, and training/serving differences. |
+| Five-field feature allowlist | Implemented in milestone 2 | Only shared, broad order/shipping-plan fields; no personal or outcome fields. |
+| Fitted preprocessing pipeline | Required for training, not implemented | Prevent training/serving differences and fitting on test data. |
 | FastAPI prediction backend | User requirement, pending implementation | Typed request validation and a clear API boundary. |
 | Incremental milestones and learner-friendly explanations | Required | Make each change reviewable and understandable. |
 | Simple single-service backend first | Proposed | Current scope does not justify distributed infrastructure. |
-| Predict at order placement | Proposed | Defines which facts can be known before predicting a delay. |
+| Predict one order when its checkout shipping plan is finalized | Defined in contract v1 | Shipping mode, scheduled days, market, destination region/country are assumed known; availability is not proven by this snapshot. |
+| Exclude canceled shipping outcomes, including suspected fraud | Defined in contract v1 | Cancellation is not successful on-time delivery; predictions are conditional on eventual non-cancellation. |
 | Chronological holdout with order isolation | Proposed | Better approximates future shipments and avoids splitting an order's items. |
 
 ## Open decisions
 
-- Resolve canceled orders and whether predictions represent order items, orders,
-  or shipments before establishing the modeling contract.
-- Confirm dataset provenance and license, prediction time, feature availability,
-  and split boundaries. Validate the assumptions using aggregate evidence.
+- Confirm dataset provenance/license and real-world feature availability; snapshot
+  data cannot prove when values were recorded. Contract v1 defines order-level
+  predictions and cancellation handling; see `DATA_AND_ML.md` for limitations.
+- Set chronological split boundaries in milestone 3 and retain whole orders.
 - Choose reproducible dependency version constraints/locking after checking the
   baseline environment; nothing is pinned beyond Python/build requirements yet.
 - Choose frontend framework, chart library, API schema, and hosting provider in

@@ -18,7 +18,10 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 ## Current handoff
 
-Milestone 1 is documentation only. No training, API, or frontend exists yet.
+Milestones 1 (documentation) and 2 (dataset validation/problem definition) are
+complete. No training, split pipeline, API, or frontend exists yet.
+`python -m freightguard.validate_data` checks the version 1 order-level contract
+and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
 `src/freightguard/inspect_data.py` is existing user work: at the initial audit its
 empty file was staged and its implementation was unstaged (`AM`). Preserve both
 states unless the user explicitly asks to change them. Check current status rather
@@ -49,6 +52,9 @@ than assuming that snapshot remains true.
   `docs/DATA_AND_ML.md` for the conservative feature policy.
 - Define prediction time and an explicit feature allowlist before training.
   Exclude the label, delivery status, actual shipping duration, and future events.
+- Contract version 1 predicts one order at finalized checkout shipping-plan time,
+  conditional on non-cancellation. Use only `FEATURE_COLUMNS` in `validate_data.py`.
+  Future canceled/fraud-marked shipping outcomes are cohort exclusions, not inputs.
 - Split before fitting preprocessing. Keep repeated order items together across
   partitions; protect a final test set. Use the same fitted preprocessing at
   training and inference. Never tune on final test results.

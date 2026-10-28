@@ -1,8 +1,9 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Only milestone 1 is authorized for
-this session: document the existing project, with no new application features.
-Later milestones are a proposed sequence, not permission for architecture changes.
+Created before implementation on 2026-10-28. Milestones 1 and 2 are complete.
+The user authorized milestone 2 after requesting a documentation-only checkpoint
+for milestone 1. Later milestones remain a proposed sequence, not permission
+for architecture changes or model training in milestone 2.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -24,7 +25,7 @@ Tests, logging, charts, and documentation should be added alongside the relevant
 behavior, rather than all being deferred to milestone 7. Keep each implementation
 small; split a milestone into substeps if its diff becomes difficult to explain.
 
-## Next focused plan: milestone 2 (not implemented)
+## Milestone 2 focused plan (completed)
 
 1. Re-read project instructions, progress, and the user's current script changes.
 2. Use local aggregate checks to establish order grouping and cancellation
@@ -33,8 +34,16 @@ small; split a milestone into substeps if its diff becomes difficult to explain.
    validation helper using existing dependencies rather than a new framework.
 4. Add synthetic fixtures covering missing columns, invalid labels, and privacy
    exclusions; make input errors understandable to a beginner.
-5. Resolve the existing import-layout lint issue only within that code milestone,
-   run tests/lint/smoke checks, and update the data contract and progress record.
+5. Run tests/lint/smoke checks and update the data contract and progress record.
+   Preserve the original script, including its existing lint issue, as explicitly
+   requested by the user; do not apply the earlier suggested import fix to it.
 
-Outstanding work includes every capability in milestones 2–7. No model quality,
+## Next: milestone 3 (not started)
+
+Implement preparation and reproducible chronological splits of eligible orders,
+with order identifiers isolated from features. Choose/document cutoff dates and
+test group disjointness and transform fitting boundaries before any model work.
+Do not train a model as part of milestone 2.
+
+Outstanding work includes every capability in milestones 3–7. No model quality,
 production readiness, frontend framework, or deployment target has been established.
