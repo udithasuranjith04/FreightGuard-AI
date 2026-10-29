@@ -4,8 +4,8 @@
 
 Milestones 1–4 and 4.1 are complete. Milestone 4 engineering is accepted and
 committed; effective alerts are not approved. Validation-only quality investigation
-is uncommitted. V1's threshold/test results remain frozen; no second test evaluation
-or refitting occurred in 4.1. No API/frontend exists. Recommendation: preserve the
+is approved and committed as `1fec68c`. V1's threshold/test results remain frozen; no second test evaluation
+or refitting occurred in 4.1. The local API is implemented; no frontend exists. Recommendation: preserve the
 educational baseline and redesign the data/problem before operational alerts.
 
 ## 2026-10-28 — Milestone 1: document the baseline
@@ -371,3 +371,46 @@ Do not tune on the original test or claim improved test performance.
 Recommended checkpoint: `feat: add validation-only model quality diagnostics`.
 Milestone 4.1 remains unstaged/uncommitted. Preserve inspect_data.py, all frozen
 run files, and local data; no API/frontend work was performed.
+
+
+## 2026-10-29 — Milestone 5: local educational FastAPI backend
+
+### Plan and checkpoint
+
+Verified HEAD `1fec68c` already contains exactly the eleven completed milestone
+4.1 code/test/documentation paths, excluding inspect_data.py and all data/artifacts.
+No duplicate commit was needed. Reviewed the existing uncommitted API draft and
+completed it rather than replacing it. Plan: modular schemas/settings/app,
+startup-only trusted loading, strict five-input validation, sanitized errors,
+explicit CORS, synthetic tests, documentation, and preservation checks.
+
+### Changes
+
+Added/completed api/__init__.py, schemas.py, settings.py, app.py and test_api.py;
+pyproject declares FastAPI, Pydantic, Uvicorn and dev HTTPX. API retains the
+frozen v1 threshold 0.40 and existing loader. Unknown categories are rejected
+using training vocabularies, also exposed as broad category lists in model info.
+No fitting, test-set predictions, frontend, model changes, or artifact writes.
+Updated AGENTS, README, architecture, development, milestones and this record;
+added API.md with startup/trust/generation/error/examples/OpenAPI instructions.
+
+### Verification
+
+112 synthetic tests pass, including 41 API cases; one installed Starlette/HTTPX
+TestClient deprecation warning remains. New API Ruff passes. Full Ruff exits 1
+only for the preserved pre-existing I001 in inspect_data.py. Real trusted-artifact
+synthetic request returned 200, risk 0.4272314668675644, experimental late at 0.40.
+A first smoke request using English France correctly returned 422: frozen category
+is Francia. Model info now exposes accepted spellings for discoverability.
+No test cohort was scored. Frozen four-file hashes and both inspection-script
+versions remain unchanged; data/artifacts remain ignored. Git diff whitespace
+checks pass. Fresh online installation/public deployment not tested; current
+Python 3.12 environment used successfully.
+
+### Limitations and review checkpoint
+
+V1 mainly models shipping plans, within-mode ranking is near chance, and all final
+test predictions were late. Readiness means educational inference only. API has
+no authentication or public deployment hardening; bind to loopback as documented.
+No frontend built. Milestone 5 remains uncommitted for review. Suggested checkpoint:
+`feat: serve frozen educational model through FastAPI` (exclude inspect_data.py).

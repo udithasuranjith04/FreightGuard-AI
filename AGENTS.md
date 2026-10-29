@@ -20,14 +20,15 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 Milestones 1–4 and 4.1 (validation-only quality investigation) are complete.
 Milestone 4 engineering is accepted; the model is not approved as effective binary
-alerts. API and frontend do not exist yet.
+alerts. Milestone 5 local FastAPI backend is implemented, uncommitted for review;
+frontend does not exist. Read `docs/API.md` before API changes.
 `python -m freightguard.validate_data` checks the version 1 order-level contract
 and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
 `python -m freightguard.prepare_data` creates chronological order splits and fits
 preprocessing on training inputs only. It saves ignored aggregate metadata, not
 order records or fitted objects. Read `docs/PREPARATION.md` before training work.
 Milestones 2/3 were committed as `dabc8c9`/`b50039b` at the user's explicit request.
-Milestone 4 was committed as `8e5410a`; milestone 4.1 remains uncommitted for review.
+Milestone 4 was committed as `8e5410a`; milestone 4.1 was committed as `1fec68c` and approved as exploratory.
 Frozen local v1 artifacts live under ignored
 `data/processed/models/v1/`. Read `docs/TRAINING.md` before using them.
 Random Forest at 0.40 was selected on validation; final test was evaluated once.

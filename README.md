@@ -26,7 +26,7 @@ The baseline
 problem is order-level delay prediction when the checkout shipping plan is
 finalized, conditional on the order not later being canceled. Random Forest was
 selected on validation, but its frozen threshold predicts every test order late;
-this limits its usefulness for selective alerts. FastAPI and the dashboard are
+this limits its usefulness for selective alerts. The local FastAPI backend serves educational predictions; the dashboard is
 not implemented yet. See the full [evaluation and limitations](docs/TRAINING.md).
 
 The engineering implementation is accepted; effective binary alerts are not.
@@ -93,3 +93,10 @@ not become prediction inputs. Raw and processed data are ignored by Git.
 
 Predictions are experimental until validated on representative
 real-world logistics data.
+
+## Run the backend
+
+See [API setup, commands, examples, and configuration](docs/API.md).
+The API exposes `/health`, `/model/info`, and `/predict`; interactive docs are
+available at `http://127.0.0.1:8000/docs` after startup. Explicit local artifact
+trust and SHA-256 verification are required for predictions.

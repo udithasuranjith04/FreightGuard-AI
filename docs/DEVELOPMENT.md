@@ -42,7 +42,7 @@ execution also works: `python src/freightguard/inspect_data.py`. The milestone 1
 smoke check executed that file's main block with the configured interpreter.
 It prints aggregate counts and schema information, reads personal columns into
 memory, and writes no output files. Do not replace the summaries with raw samples.
-There is no web application or prediction command yet.
+The local educational API is documented in [API.md](API.md).
 
 ## Run dataset contract validation
 
@@ -187,7 +187,7 @@ Milestone 3 was subsequently committed as `b50039b`, containing twelve approved
 code/test/documentation paths; both script versions remain unchanged.
 Milestone 4 was committed as `8e5410a`, containing only its fifteen code/test/doc
 paths. Its engineering was accepted, but alert effectiveness was not approved.
-Milestone 4.1 remains uncommitted for review. Suggested checkpoint:
+Milestone 4.1 was committed as `1fec68c`. Its checkpoint message was:
 `feat: add validation-only model quality diagnostics`.
 Stage only its new diagnostics module/tests and affected documentation (including
 `docs/MODEL_QUALITY.md`); use an explicit-path commit to exclude the preserved
@@ -201,3 +201,9 @@ frontend/API start sequence, environment variables without real secrets, build
 steps, artifact loading, health checks, and hosting/rollback steps for the chosen
 platform. Only a reviewed model and public-safe aggregates should be needed by
 the deployed application; raw customer data must remain offline.
+
+## Local API
+
+See [API.md](API.md) for installation, exact startup commands, environment
+configuration, synthetic curl examples and OpenAPI. Milestone 5 is local only,
+uncommitted for review; no frontend or hosting has been added.

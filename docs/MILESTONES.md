@@ -3,7 +3,7 @@
 Created before implementation on 2026-10-28. Milestones 1–4 and 4.1 are complete.
 The user requested commits for milestones 1–4, accepting milestone 4 engineering
 but rejecting approval as effective alerts. Milestone 4.1 is an uncommitted
-validation-only investigation. API/frontend work is not authorized in this session.
+validation-only investigation. Milestone 5 API work is authorized and complete locally; frontend is deferred.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -74,9 +74,9 @@ v1 and redesign the operational data/problem with a fresh evaluation plan before
 promoting selective alerts. Do not implement a redesign or conduct a second test
 evaluation without approval.
 
-## Milestone 5 (not started)
+## Milestone 5 (implemented, uncommitted for review)
 
-FastAPI work requires a new request. Reuse the frozen pipeline/schema/loading
+FastAPI work was requested and implemented; see API.md. Reuse the frozen pipeline/schema/loading
 rules and display research limitations honestly. The selected threshold predicts
 all test orders late; it is not a demonstrated selective-alert improvement.
 Any new modeling experiment needs a documented fresh evaluation plan rather than
@@ -84,3 +84,8 @@ further optimization against this already-observed test set.
 
 Outstanding work includes milestones 5–7. Historical model metrics exist;
 production readiness, frontend framework, and hosting remain unestablished.
+
+Milestone 4.1 is approved as exploratory and committed as `1fec68c`.
+Milestone 5 adds startup-only trusted inference, strict schemas, health/info, CORS,
+sanitized errors and synthetic API tests. Next work is review, then milestone 6
+only when requested. No further model evaluation is authorized.

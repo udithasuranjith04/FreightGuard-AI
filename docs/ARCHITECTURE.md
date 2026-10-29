@@ -150,3 +150,17 @@ Start with one Python package and one FastAPI service, then choose a small
 frontend after reviewing its needs with the user. There is no approved frontend
 framework or hosting provider yet. A database, queues, microservices, and cloud
 infrastructure are not currently required.
+
+
+## Milestone 5: implemented local API
+
+`src/freightguard/api/settings.py` reads explicit trust/hash/path/CORS environment
+configuration; `schemas.py` defines strict five-input and honest response contracts;
+`app.py` provides the FastAPI factory, lifespan loading, bounded JSON input,
+sanitized errors, CORS, health, model info and prediction routes. Imports never
+load artifacts. Each worker loads once, using existing model_artifact.load_model;
+requests use the same frozen pipeline. Failure leaves health/info available and
+prediction unavailable. Model info exposes broad training categories, never rows.
+`tests/test_api.py` tests synthetic behavior. Dependencies add FastAPI/Pydantic/
+Uvicorn, with dev HTTPX. No frontend/service/database added. See [API.md](API.md).
+Milestone 4.1 checkpoint is `1fec68c`; Milestone 5 is uncommitted for review.
