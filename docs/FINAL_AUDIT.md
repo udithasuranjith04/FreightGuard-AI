@@ -75,6 +75,19 @@ found during this final pass.
   within-shipping-mode ranking. Its scores are experimental and conditional on
   non-cancellation. It is not operationally validated or a delivery guarantee.
 
+## 2026-10-30 release-preparation update
+
+The user authorized correcting author and committer metadata on the nine local
+commits after the unchanged `origin/main` base. A backup ref was created; each
+rewritten commit retained its original tree and message, and the two commits on
+`origin/main` were not rewritten. A scoped MIT license was added for original
+application source code only. The DataCo source URL, version, checksum, and
+redistribution terms remain unverified; no dataset or serialized model artifacts
+are included or covered by that license. Third-party dependencies retain their
+own licenses. The two already-published commits still contain the earlier
+machine-local author/committer identity and require user review before making the
+repository public.
+
 These are explicit limits/gates for other release targets, not claims that those
 checks passed. See RELEASE_CHECKLIST.md and DEPLOYMENT.md before distribution or
 hosting. See README.md for the verified native startup commands. The commit hash

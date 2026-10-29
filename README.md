@@ -191,8 +191,13 @@ preparation, not production certification.
 See the [release checklist](docs/RELEASE_CHECKLIST.md),
 [security findings](docs/SECURITY.md), and [deployment instructions](docs/DEPLOYMENT.md).
 Before public hosting, separately review TLS, authentication, rate limits, resource
-limits, logging, artifact distribution and exact allowed origins. Choose a source
-license and confirm dataset/artifact sharing rights before distribution.
+limits, logging, artifact distribution and exact allowed origins. This repository's
+[MIT license](LICENSE) covers only the original application source code authored
+for this project. It grants no rights to the DataCo dataset or its contents, the
+serialized model artifacts, third-party materials, or dependencies. Each
+dependency keeps its own license. The dataset's exact upstream URL, version,
+checksum, and redistribution terms remain unverified; the dataset and model
+artifacts are not included or licensed for redistribution here.
 
 ## Documentation
 
@@ -201,5 +206,6 @@ license and confirm dataset/artifact sharing rights before distribution.
 - [Training/evaluation](docs/TRAINING.md) and [quality investigation](docs/MODEL_QUALITY.md)
 - [Frontend](docs/FRONTEND.md), [API](docs/API.md), and [deployment](docs/DEPLOYMENT.md)
 - [Security](docs/SECURITY.md) and [release checklist](docs/RELEASE_CHECKLIST.md)
+- [MIT license scope](LICENSE)
 - [Progress/evidence](docs/PROGRESS.md), [decisions](docs/DECISIONS.md),
   [milestones](docs/MILESTONES.md), and [agent instructions](AGENTS.md)

@@ -22,9 +22,11 @@ below remain gates for broader distribution/container/hosting targets.
 - [x] Review all Milestone 7 diffs, test evidence and remaining warnings.
 - [x] Review index separately: inspect_data.py still contains the user's empty staged blob.
 - [x] Confirm only intended source/config/docs are selected for the checkpoint; no force-add or blanket commit.
-- [ ] Review Git author identity and public history intentionally; no history was rewritten.
-- [ ] Choose the project's source license and confirm redistribution obligations.
+- [x] Correct author/committer metadata on only the nine unpublished commits; verify their trees and preserve the published base.
+- [x] Add a scoped MIT license for original application source code only; exclude data, model artifacts and separately licensed dependencies.
+- [ ] Review the two already-published commits' machine-local author metadata before making the repository public; they were not rewritten.
 - [ ] Confirm dataset provenance/license and artifact sharing rights before distributing either.
+- [x] Keep dataset provenance uncertainty explicit and keep the dataset and model artifacts out of Git and out of the source-license grant.
 - [ ] Review synthetic screenshots before adding public screenshots; generated results stay ignored.
 - [ ] Run prepared GitHub Actions on the intended repository; no remote CI run verified here.
 - [ ] Pin/review third-party action commits and base-image digests for a release gate.

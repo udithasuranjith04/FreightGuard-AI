@@ -10,7 +10,12 @@ The user supplied the DataCo Smart Supply Chain dataset in `data/raw/`:
 Both files are ignored by Git. Read the main file as Latin-1, as the existing
 script does. Exact download URL, dataset version, checksum, and redistribution
 license have not been verified; record provenance and confirm terms before any
-public redistribution. This audit used local files only.
+public redistribution. The dataset name is recorded from the supplied local
+files; this is not a verified upstream attribution or grant of rights. The raw
+dataset is not included in Git. The project's MIT license covers only original
+application source code and grants no dataset or model-artifact rights. This audit
+used local files only; do not publish or redistribute the dataset or serialized
+model artifacts under the project's source license.
 
 The fields include order items, products, commercial amounts, locations,
 timestamps, shipping mode, customer information, and observed outcomes. Rows are

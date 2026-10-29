@@ -89,8 +89,11 @@ Review generated screenshots before publishing; none was added to Git.
   guaranteed by this milestone.
 - Docker, image scanning and remote CI could not be executed here. Base-image and
   GitHub Action tags remain mutable; review/pin exact identities before release.
-- No source license has been chosen; dataset provenance/license and artifact
-  redistribution require review before distribution.
+- The repository now carries a scoped MIT license for original application
+  source code only. It does not grant rights to the DataCo dataset, serialized
+  model artifacts, third-party materials, or dependencies. Dataset provenance,
+  licensing and attribution are unverified; do not distribute the dataset or
+  model artifacts. Each dependency retains its own license.
 - V1's all-late test result and near-chance within-mode ranking block operational
   claims. A new prospective modeling evaluation needs separate authorization.
 

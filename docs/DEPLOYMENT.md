@@ -97,8 +97,11 @@ the separately trusted local model and both local servers.
 
 See RELEASE_CHECKLIST.md. Before public release: review the final diff and index,
 run CI on the intended repository, verify container builds/startup/error modes,
-scan images, record dependency/base-image identities, choose a source license,
-and confirm data/artifact distribution rights. Before public hosting: approve
+scan images, record dependency/base-image identities, and confirm any data or
+artifact distribution rights. The root MIT license covers only original
+application source code; it does not license dataset contents, serialized model
+artifacts, third-party materials or dependencies. Dataset provenance and terms
+remain unverified, so keep the dataset and artifacts excluded. Before public hosting: approve
 infrastructure and audience; add TLS, authentication, rate/resource limits,
 monitoring and a reviewed logging policy. Operational alerts require a separate
 problem/data redesign and prospective evaluation. No existing model metric earns
