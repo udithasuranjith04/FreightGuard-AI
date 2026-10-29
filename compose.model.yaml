@@ -1,0 +1,10 @@
+# Opt-in local trusted artifact mount; never copied into either image.
+services:
+  backend:
+    volumes:
+      - type: bind
+        source: ./data/processed/models/v1/pipeline.joblib
+        target: /models/pipeline.joblib
+        read_only: true
+        bind:
+          create_host_path: false

@@ -113,10 +113,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                         encoder = model.pipeline.named_steps[
                             "preprocessor"
                         ].named_transformers_["categorical"]
+                        if len(encoder.categories_) != len(FEATURE_MAP) - 1 or any(
+                            len(values) == 0
+                            or any(not isinstance(value, str) for value in values)
+                            for values in encoder.categories_
+                        ):
+                            raise ValueError("Invalid categorical model contract.")
                         application.state.known_categories = {
                             field: frozenset(values)
                             for field, values in zip(
-                                list(FEATURE_MAP)[1:], encoder.categories_
+                                list(FEATURE_MAP)[1:], encoder.categories_, strict=True
                             )
                         }
                         application.state.model = model
@@ -158,11 +164,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if response.status_code >= 400 and not response.headers.get(
                 "content-type", ""
             ).startswith("application/json"):
-                return error_response(response.status_code)
-            return response
-        except Exception:  # noqa: BLE001 - sanitize all artifact/request failures
+                response = error_response(response.status_code)
+        except Exception:  # noqa: BLE001 - boundary must sanitize unexpected failures
             LOGGER.error("API request failed; payload and exception details omitted.")
-            return error_response(500)
+            response = error_response(500)
+            # This boundary surrounds CORS; preserve its explicit origin policy on 500s.
+            origin = request.headers.get("origin")
+            if origin in config.cors_origins:
+                response.headers["Access-Control-Allow-Origin"] = origin
+                response.headers["Vary"] = "Origin"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Cache-Control"] = "no-store"
+        return response
 
     @api.exception_handler(RequestValidationError)
     async def invalid_request(request: Request, exc: RequestValidationError):

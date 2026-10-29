@@ -107,6 +107,21 @@ export function About() {
               "Architecture",
               "Project structure and engineering decisions",
             ],
+            [
+              "DEPLOYMENT.md",
+              "Deployment readiness",
+              "Local container candidate and release gates",
+            ],
+            [
+              "SECURITY.md",
+              "Security review",
+              "Audit scope, findings and remaining limits",
+            ],
+            [
+              "RELEASE_CHECKLIST.md",
+              "Release checklist",
+              "Checks and human review before distribution",
+            ],
           ].map(([file, title, description]) => (
             <div key={file}>
               <DocLink file={file!}>{title}</DocLink>

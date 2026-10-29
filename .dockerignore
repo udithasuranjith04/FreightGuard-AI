@@ -1,0 +1,27 @@
+# Only explicit application/build inputs enter the Docker build context.
+**
+!Dockerfile
+!pyproject.toml
+!README.md
+!requirements/
+!requirements/runtime.txt
+!src/
+!src/freightguard/
+!src/freightguard/**
+!frontend/
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/index.html
+!frontend/tsconfig.json
+!frontend/vite.config.ts
+!frontend/src/
+!frontend/src/**
+!frontend/public/
+!frontend/public/**
+!docs/
+!docs/*.md
+!deploy/
+!deploy/nginx.conf
+**/__pycache__/
+**/*.pyc
+**/.env*

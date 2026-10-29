@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 // Requires the two local servers. No mocks: only an invented five-input shipment.
 test("synthetic shipment through the browser and frozen local API", async ({
   page,
@@ -106,10 +107,15 @@ test("all pages, keyboard skip link, documentation and responsive layout", async
     "MODEL_QUALITY.md",
     "ARCHITECTURE.md",
     "FRONTEND.md",
+    "DEPLOYMENT.md",
+    "SECURITY.md",
+    "RELEASE_CHECKLIST.md",
   ]) {
     const response = await page.request.get(`/docs/${name}`);
     expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toMatch(/^text\/(plain|markdown)/);
+    expect(response.headers()["content-type"]).toMatch(
+      /^text\/(plain|markdown)/,
+    );
     expect(await response.text()).toMatch(/^# /);
   }
 });
@@ -150,4 +156,73 @@ test("offline backend and unavailable model are distinct browser states", async 
     page.getByRole("button", { name: "Calculate experimental risk" }),
   ).toBeDisabled();
   await expect(page.getByText(/Predictions are unavailable/)).toBeVisible();
+});
+
+test("accessible pages and smallest supported mobile layout", async ({
+  page,
+}, testInfo) => {
+  for (const id of ["overview", "prediction", "insights", "status", "about"]) {
+    await page.goto(`/#${id}`);
+    await expect(
+      page.getByText("API connected", { exact: true }),
+    ).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+      .analyze();
+    expect(
+      results.violations.map((issue) => ({
+        id: issue.id,
+        impact: issue.impact,
+        targets: issue.nodes.map((node) => node.target),
+      })),
+    ).toEqual([]);
+  }
+  if (testInfo.project.name === "mobile") {
+    await page.setViewportSize({ width: 320, height: 740 });
+    await page.goto("/#prediction");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Shipment Risk Prediction" }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+  }
+});
+
+test("API prediction errors appear as actionable frontend errors", async ({
+  page,
+}) => {
+  for (const [status, code, message] of [
+    [422, "validation_error", "Check the five inputs"],
+    [503, "model_unavailable", "backend is reachable"],
+    [500, "internal_error", "Prediction could not be completed"],
+  ] as const) {
+    await page.route("**/predict", (route) =>
+      route.fulfill({ status, json: { error: { code, fields: [] } } }),
+    );
+    await page.goto("/#prediction");
+    await page
+      .getByRole("spinbutton", { name: "Scheduled shipping days" })
+      .fill("4");
+    for (const [name, value] of [
+      ["Shipping mode", "Standard Class"],
+      ["Market", "Europe"],
+      ["Order region", "Western Europe"],
+      ["Order country", "Francia"],
+    ]) {
+      await page
+        .getByRole("combobox", { name, exact: true })
+        .selectOption(value);
+    }
+    await page
+      .getByRole("button", { name: "Calculate experimental risk" })
+      .click();
+    await expect(page.getByRole("alert")).toContainText(message);
+    await expect(
+      page.getByRole("button", { name: "Calculate experimental risk" }),
+    ).toBeEnabled();
+    await page.unroute("**/predict");
+  }
 });

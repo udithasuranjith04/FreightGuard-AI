@@ -19,7 +19,11 @@ const geography = z
   .string()
   .min(2)
   .max(80)
-  .refine((v) => /\p{L}/u.test(v) && /^[\p{L}\p{M} .\-'’()]+$/u.test(v));
+  .transform((value) => value.trim().normalize("NFC"))
+  .refine(
+    (v) =>
+      v.length >= 2 && /\p{L}/u.test(v) && /^[\p{L}\p{M} .\-'’()]+$/u.test(v),
+  );
 export const requestSchema = z
   .object({
     scheduled_shipping_days: z.number().int().min(0).max(4),
@@ -51,33 +55,44 @@ export const infoSchema = z.object({
   limitations: z.array(z.string()),
   allowed_categories: z.record(z.string(), z.array(z.string())),
 });
-export const predictionSchema = z.object({
-  risk_score: z.number().min(0).max(1),
-  experimental_prediction: z.enum(["late", "not_late"]),
-  model_version: z.literal("v1"),
-  threshold: z.literal(0.4),
-  experimental: z.literal(true),
-  operationally_validated: z.literal(false),
-  warnings: z.array(z.string()),
-});
+export const predictionSchema = z
+  .object({
+    risk_score: z.number().min(0).max(1),
+    experimental_prediction: z.enum(["late", "not_late"]),
+    model_version: z.literal("v1"),
+    threshold: z.literal(0.4),
+    experimental: z.literal(true),
+    operationally_validated: z.literal(false),
+    warnings: z.array(z.string()),
+  })
+  .refine(
+    (value) =>
+      value.risk_score >= value.threshold ===
+      (value.experimental_prediction === "late"),
+    "Prediction contradicts the frozen classification threshold.",
+  );
 export type Health = z.infer<typeof healthSchema>;
 export type ModelInfo = z.infer<typeof infoSchema>;
 export type Prediction = z.infer<typeof predictionSchema>;
-export const API_BASE = (
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000"
-).replace(/\/$/, "");
-const configuredUrl = new URL(API_BASE);
-if (
-  !["http:", "https:"].includes(configuredUrl.protocol) ||
-  configuredUrl.username ||
-  configuredUrl.password ||
-  configuredUrl.search ||
-  configuredUrl.hash
-) {
-  throw new Error(
-    "VITE_API_BASE_URL requires an HTTP(S) URL without credentials, query or fragment.",
-  );
+export function validatedApiBase(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (
+      !["http:", "https:"].includes(url.protocol) ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash
+    )
+      return null;
+    return url.href.replace(/\/$/, "");
+  } catch {
+    return null;
+  }
 }
+export const API_BASE = validatedApiBase(
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000",
+);
 export class ApiError extends Error {
   constructor(
     public readonly code: string,
@@ -101,6 +116,11 @@ async function request<T>(
   schema: z.ZodType<T>,
   input?: PredictionInput,
 ): Promise<T> {
+  if (!API_BASE)
+    throw new ApiError(
+      "configuration",
+      "Set VITE_API_BASE_URL to an HTTP(S) API URL without credentials, query or fragment, then rebuild/restart the frontend.",
+    );
   let response: Response;
   try {
     response = await fetch(`${API_BASE}${path}`, {

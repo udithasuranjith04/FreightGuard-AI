@@ -221,3 +221,26 @@ Backend tests still run from the repository root with `.venv/bin/python -m pytes
 No raw dataset is required for unit tests or a dashboard build. Real predictions
 require the existing trusted local v1 pipeline. Never refit or repeat the original
 test evaluation for dashboard verification; use the documented synthetic shipment.
+
+
+## Milestone 7 release checks
+
+For fresh installs use `python -m pip install -r requirements/dev.txt`, then
+`python -m pip install --no-deps -e .`. Pins snapshot the current Python 3.12
+environment; Linux/container installation remains to verify. Do not replace the
+working environment or refit the frozen model to resolve an install difference.
+
+Run `.venv/bin/python -m pytest -q` and full `.venv/bin/python -m ruff check .`.
+Report the preserved inspection import issue honestly. The maintained-code check
+is `.venv/bin/python -m ruff check . --exclude src/freightguard/inspect_data.py`.
+Run `.venv/bin/python scripts/audit_repository.py` to scan public working files,
+bundle and reachable Git file history without printing matching values.
+
+Frontend: `npm ci`, typecheck, lint, test, build and audit from frontend/. With
+the two local servers running, `npm run test:e2e` includes automated axe checks,
+320px layout, keyboard navigation, real synthetic inference and fault injection.
+Do not confuse synthetic browser test requests with reevaluating the old holdout.
+
+See DEPLOYMENT.md for container candidates and limitations, SECURITY.md for audit
+scope/results, and RELEASE_CHECKLIST.md before a final source checkpoint. No Docker
+or external CI execution is claimed. No automatic release, push or deployment.

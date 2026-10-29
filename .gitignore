@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 .ipynb_checkpoints/
 .env
+.env.*
 .DS_Store
 data/raw/*
 data/processed/*

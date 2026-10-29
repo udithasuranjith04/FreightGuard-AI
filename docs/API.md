@@ -109,3 +109,14 @@ privacy-safe errors/logs, CORS, body limits, and OpenAPI. Existing artifact test
 verify real checksum enforcement. A manual real-artifact smoke check uses only the
 synthetic example above, never test-set evaluation. Full Ruff retains the existing
 inspection-script import issue, which must be preserved.
+
+
+## Milestone 7 hardening
+
+Startup now rejects malformed/truncated category vocabulary contracts before
+marking the model ready. Unexpected sanitized 500 responses preserve the explicit
+allowed-origin policy, so browsers receive a useful API error. All responses carry
+nosniff, no-referrer and no-store headers. A new integration regression proves
+checksum failure prevents deserialization. No endpoint, threshold or artifact
+changed. Native startup remains local-only; container candidates and pending
+verification are documented in DEPLOYMENT.md. See SECURITY.md for audit scope.

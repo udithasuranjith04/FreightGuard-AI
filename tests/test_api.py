@@ -334,3 +334,57 @@ def test_settings_read_environment_without_implicit_trust(monkeypatch):
     settings = Settings.from_env()
     assert settings.trust_local_model is False
     assert settings.cors_origins == ("https://demo.example",)
+
+
+@pytest.mark.parametrize("categories", [[], [["Standard Class"]], [[], [], [], []]])
+def test_incomplete_category_contract_is_not_ready(configured, categories):
+    settings, model, _ = configured
+    encoder = model.pipeline.named_steps["preprocessor"].named_transformers_[
+        "categorical"
+    ]
+    encoder.categories_ = categories
+    with TestClient(create_app(settings)) as client:
+        assert client.get("/health").json()["model_ready"] is False
+        assert client.post("/predict", json=PAYLOAD).status_code == 503
+
+
+@pytest.mark.parametrize(
+    "origin", ["http://localhost:5173", "https://unapproved.example"]
+)
+def test_unexpected_errors_keep_cors_policy_and_security_headers(
+    configured, monkeypatch, origin
+):
+    settings, model, _ = configured
+
+    def broken(frame):
+        raise RuntimeError("private-details")
+
+    monkeypatch.setattr(model, "predict", broken)
+    with TestClient(create_app(settings)) as client:
+        response = client.post("/predict", json=PAYLOAD, headers={"Origin": origin})
+    assert response.status_code == 500
+    assert response.headers.get("access-control-allow-origin") == (
+        origin if origin in settings.cors_origins else None
+    )
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["referrer-policy"] == "no-referrer"
+    assert "private-details" not in response.text
+
+
+def test_real_loader_checksum_failure_never_deserializes(tmp_path, monkeypatch):
+    artifact = tmp_path / "pipeline.joblib"
+    artifact.write_bytes(b"synthetic untrusted bytes")
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Checksum failure must happen before deserialization")
+
+    monkeypatch.setattr("freightguard.model_artifact.joblib.load", forbidden)
+    settings = Settings(
+        model_path=artifact, trust_local_model=True, model_sha256="0" * 64
+    )
+    with TestClient(create_app(settings)) as client:
+        assert client.get("/model/info").json()["unavailable_reason"] == (
+            "model_load_failed"
+        )
+        assert client.post("/predict", json=PAYLOAD).status_code == 503

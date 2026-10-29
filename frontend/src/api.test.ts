@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { api, ApiError, infoSchema, requestSchema, validateInput } from "./api";
+import {
+  api,
+  ApiError,
+  infoSchema,
+  requestSchema,
+  validateInput,
+  validatedApiBase,
+} from "./api";
 import { info, json, payload, prediction } from "./test/fixtures";
 
 describe("five-input contract", () => {
@@ -122,5 +129,54 @@ describe("typed API client", () => {
       expect((error as ApiError).fields).toEqual(["order_country"]);
       expect((error as ApiError).message).not.toContain("private");
     }
+  });
+});
+
+describe("release contract regression checks", () => {
+  it("rejects a score/classification contradiction", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(json({ ...prediction, risk_score: 0.2 })),
+    );
+    await expect(api.predict(payload)).rejects.toMatchObject({
+      code: "response",
+    });
+  });
+  it("accepts boundary and not-late classifications without relabeling", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(json({ ...prediction, risk_score: 0.4 })),
+    );
+    expect((await api.predict(payload)).experimental_prediction).toBe("late");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        json({
+          ...prediction,
+          risk_score: 0.2,
+          experimental_prediction: "not_late",
+        }),
+      ),
+    );
+    expect((await api.predict(payload)).experimental_prediction).toBe(
+      "not_late",
+    );
+  });
+});
+
+describe("API configuration", () => {
+  it.each([
+    "not a URL",
+    "javascript:alert(1)",
+    "https://user:pass@example.com",
+    "https://example.com?token=private",
+    "https://example.com#secret",
+  ])("safely rejects invalid configuration %s", (value) => {
+    expect(validatedApiBase(value)).toBeNull();
+  });
+  it("keeps a valid public base path", () => {
+    expect(validatedApiBase("http://127.0.0.1:8000/")).toBe(
+      "http://127.0.0.1:8000",
+    );
   });
 });

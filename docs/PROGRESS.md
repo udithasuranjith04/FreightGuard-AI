@@ -5,8 +5,9 @@
 Milestones 1–4 and 4.1 are complete. Milestone 4 engineering is accepted and
 committed; effective alerts are not approved. Validation-only quality investigation
 is approved and committed as `1fec68c`. V1's threshold/test results remain frozen; no second test evaluation
-or refitting occurred in 4.1. The local API is committed as `06461e7`; the Milestone 6 dashboard is implemented
-and uncommitted for review. Recommendation: preserve the
+or refitting occurred in 4.1. The local API is committed as `06461e7`; the Milestone 6 dashboard is committed as `d9cdf73`. Milestone 7 passed the independent final native/local audit; the user authorized
+its source checkpoint. See FINAL_AUDIT.md and Git history for the handoff.
+Docker runtime/image scans, remote CI and release approval remain pending. Recommendation: preserve the
 educational baseline and redesign the data/problem before operational alerts.
 
 ## 2026-10-28 — Milestone 1: document the baseline
@@ -491,3 +492,125 @@ Milestone 6 remains uncommitted, with no M6 files staged. Suggested commit:
 lockfile, environment example, ignore rules and docs only; exclude inspect_data.py
 and all generated files. Model remains an educational shipping-plan demonstration,
 not operationally validated. No public deployment or additional modeling work.
+
+
+## 2026-10-29 — Milestone 7: final integration, QA and release preparation
+
+### Plan, checkpoint and preservation
+
+Reviewed all M6 source/config/docs and both index/working changes. Clean npm ci,
+strict TypeScript, ESLint, 29 frontend tests and production build passed; 112
+backend tests/API lint passed. Committed exactly 35 M6 files as d9cdf73 using an
+explicit-path commit. No user script/data/artifacts/generated output included.
+The empty staged blob and implemented working script are preserved. Its existing
+Ruff import issue remains because changing it would alter the preserved version.
+
+M7 plan: audit actual API/UI contracts and privacy/error/load paths; correct proven
+issues with regressions; verify synthetic native integration/mobile/accessibility;
+audit dependencies and reachable Git/public files; prepare local container/CI
+candidates and portfolio/release documentation without externally publishing.
+
+### Completed changes
+
+- Backend rejects truncated/invalid category vocabulary contracts, keeps explicit
+  CORS response policy on unexpected sanitized errors, and adds nosniff/no-referrer/
+  no-store headers. A real-loader checksum-failure test blocks deserialization.
+- Frontend rejects inconsistent score/classification responses rather than
+  relabeling the model, safely reports invalid API URL configuration, and matches
+  backend geography normalization. Added not-late/boundary/configuration tests.
+- Axe WCAG A/AA checks cover all five pages at desktop/mobile sizes. Found/fixed
+  secondary-text contrast and fade-opacity issues; retained original UI/layout.
+  Added 320px overflow and displayed 422/503/500 error checks. Historical charts
+  remain the original documented aggregate values, with no fake live analytics.
+- Added exact observed Python runtime/dev snapshots, Dockerfile/context allowlist,
+  local-only base Compose plus opt-in read-only artifact mount, unprivileged Nginx
+  candidate with security headers, and read-only synthetic GitHub Actions checks.
+- Added redacted source/history/bundle review aid and its synthetic test. Rewrote
+  portfolio README with architecture, setup, metrics, limitations and screenshot
+  instructions. Added SECURITY.md, DEPLOYMENT.md and RELEASE_CHECKLIST.md; expanded
+  the UI docs allowlist to eight public files. Updated project memory/handoff.
+- No model/training/evaluation code, frozen artifact, threshold or private dataset
+  changed. No refit, test-cohort scoring, final release commit/tag/push or external
+  deployment. M7 changes remain unstaged/uncommitted for review.
+
+### Check results and boundaries
+
+Backend: 119 passed; frontend: 38 unit/UI tests passed; TypeScript, ESLint and
+production build passed. Ten production-bundle Chromium browser checks pass:
+real synthetic inference at desktop/mobile widths, navigation/keyboard/docs,
+offline/model-unavailable states, WCAG A/AA analysis across five pages, 320px
+layout and actionable 422/503/500 errors. The synthetic original-v1 result remains
+0.4272314668675644 -> 42.7%, experimental Late at 0.40, operational validation false.
+
+Maintained-code Ruff passes with an explicit exclusion for the preserved script;
+full Ruff reports only its original I001. Pip check passes. Exact-version Python
+install dry-run matches the current environment. npm ci with the lockfile is
+verified. npm audit and separate pip-audit checks (25 runtime + 9 additional dev
+pins) report no known vulnerabilities. Audit tool lived in a temporary venv,
+leaving project dependencies unchanged. Python pins have no distribution hashes;
+fresh Linux/platform install is unverified.
+
+The redacted scanner checked 115 reachable history blobs and 88 public working/build
+files and found no token/key/literal-credential/email/private-path matches. It does
+not certify absence of arbitrary PII/encoded secrets. Manual log-path/source review
+found no customer records or real credentials. Only data .gitkeep files are tracked;
+all four original artifact hashes and the script working hash/index remain intact.
+Generated bundles/screenshots/log traces remain ignored and use synthetic inputs.
+
+Compose/override/CI YAML parse successfully. Docker is not installed, so Docker
+compose config, builds, container startup/security-header behavior and image scans
+were not run. No remote CI executed. Native production-preview/browser integration
+is verified; it does not substitute for container verification. Base image/action
+tags remain mutable; review/pin identities before using them as release gates.
+
+Known non-failing warnings: existing Starlette/HTTPX TestClient deprecation,
+ESLint 9 upstream support notice, Zod PURE-comment build annotation, npm lifecycle
+script-policy notice, NO_COLOR/FORCE_COLOR precedence, pip-audit missing-hash advice.
+No automatic force-upgrade or untrusted artifact loading was performed.
+
+### Release assessment and checkpoint
+
+Local educational portfolio application is integrated and verified. Public hosting
+and operational model approval remain blocked: unverified Docker/CI/Linux setup,
+license/provenance/distribution review, hosting TLS/auth/rate/resource/logging review,
+and the fundamental all-late/weak within-mode model result. Automated accessibility
+is not full manual screen-reader/cross-browser certification. Release source needs
+user review; no final release commit is made.
+
+Recommended checkpoint after review:
+`chore: prepare educational portfolio release and integration QA`.
+Exclude inspect_data.py and every ignored/generated/private file. Consult the
+release checklist before a tag, push, artifact distribution or public deployment.
+
+
+## 2026-10-29 — Independent final release audit and authorized M7 checkpoint
+
+Reviewed repository inventory, recent history, index, M7 diffs/new files, data/ML
+contract, actual HTTP/client schemas, browser pages/tests, privacy/logging/load
+paths and release documentation. Reran complete pytest (119 passed), full Ruff
+(only preserved script I001), maintained-code Ruff (passed), pip check (passed),
+npm ci/typecheck/lint (passed), 38 frontend tests, production build (passed), npm
+and Python advisory audits (no known vulnerabilities). Ten production-browser
+checks passed at desktop/mobile widths, including five-page axe/keyboard/layout
+checks, real synthetic prediction and displayed API/unavailable error states.
+
+Live health/info/OpenAPI/docs/ReDoc responded 200. Synthetic prediction remained
+0.4272314668675644 / experimental Late / threshold 0.40 / not operationally
+validated. Sensitive synthetic extra field rejected with 422, no value echo.
+Existing dev server on 5173 was preserved; audit production preview used 5174,
+PLAYWRIGHT_BASE_URL and an explicit temporary CORS origin. No model/data changes,
+real training, diagnostic run or held-out scoring. Four artifact hashes, script
+working hash and empty staged blob match their original identities.
+
+Final corrections: ignore root .env.* variants; explicitly disable inherited model
+trust in the no-trust startup example; allow a configurable browser test base URL.
+Added FINAL_AUDIT.md with actual results and scoped verdict. Final native/local
+verdict is READY FOR EDUCATIONAL PORTFOLIO RELEASE. Docker/CI/Linux/image checks,
+license/distribution and external hosting gates remain pending and unclaimed.
+Full Ruff exception and all known tool/model limitations are documented.
+
+User authorizes an explicit-path Milestone 7 commit after passing these checks.
+The checkpoint excludes inspect_data.py and all ignored/private/generated files.
+Its identity is recorded in Git history/final handoff. No tag, push or external
+deployment is performed. The original user script remains the only outstanding
+staged/working change after that commit.

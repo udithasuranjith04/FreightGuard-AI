@@ -21,7 +21,14 @@ keeping the code understandable to a Python learner. Preserve existing work.
 Milestones 1–4 and 4.1 (validation-only quality investigation) are complete.
 Milestone 4 engineering is accepted; the model is not approved as effective binary
 alerts. Milestone 5 local FastAPI backend is committed as `06461e7`.
-Milestone 6 React/TypeScript dashboard is implemented, uncommitted for review.
+Milestone 6 React/TypeScript dashboard is committed as `d9cdf73`.
+Milestone 7 passed final native/local release audit and its source checkpoint
+was authorized by the user. Read `docs/FINAL_AUDIT.md` for evidence and limitations.
+Read `docs/SECURITY.md`, `docs/DEPLOYMENT.md`, and `docs/RELEASE_CHECKLIST.md`.
+The user authorized the final Milestone 7 commit after passing checks.
+No release tag, push or external deployment is authorized. Docker/remote CI
+remain unverified; native integration is tested. Preserve inspect_data.py exactly
+(including its existing Ruff issue) and keep all four frozen artifact hashes.
 Read `docs/API.md` before API changes and `docs/FRONTEND.md` before frontend work.
 Keep frontend metrics labeled historical; never invent shipment records or KPIs.
 Frontend checks: `cd frontend`, then `npm run typecheck`, `npm run lint`,

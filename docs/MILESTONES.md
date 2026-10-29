@@ -1,10 +1,10 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Milestones 1–5 are committed; Milestone 6 is implemented for review.
+Created before implementation on 2026-10-28. Milestones 1–6 are committed; Milestone 7 is completed locally for review.
 The user requested commits for milestones 1–4, accepting milestone 4 engineering
 but rejecting approval as effective alerts. Milestone 4.1 is an approved exploratory
 validation-only investigation. Milestone 5 is committed as `06461e7`; Milestone 6
-adds the authorized local frontend and remains uncommitted.
+adds the authorized local frontend and is committed as `d9cdf73`.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -103,3 +103,15 @@ run TypeScript/Vitest/ESLint/build/backend regressions, and run desktop/mobile
 synthetic predictions against both local servers. See FRONTEND.md and PROGRESS.md
 for completed checks. Public deployment remains milestone 7; do not start it or
 new modeling work without a request.
+
+
+## Milestone 7 (completed locally; release review pending)
+
+M6 verified and committed as d9cdf73, excluding user script/data/generated files.
+M7 reviewed integration/security, corrected legitimate contract/CORS/accessibility
+issues, added regression/axe checks, dependency pins and audits, redacted history
+review, optional local container configuration, read-only CI and portfolio/release
+documentation. Native browser integration is tested. Docker runtime/image scans,
+fresh Linux setup and remote CI remain unverified. No final release commit/tag,
+push, external deployment, model changes or holdout reevaluation was performed.
+See PROGRESS.md for final evidence and RELEASE_CHECKLIST.md for review gates.

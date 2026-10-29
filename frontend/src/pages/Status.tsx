@@ -92,7 +92,9 @@ export function Status({
         <dl className="details-list">
           <div>
             <dt>API base URL</dt>
-            <dd className="break-all">{API_BASE}</dd>
+            <dd className="break-all">
+              {API_BASE ?? "Invalid API URL configuration"}
+            </dd>
           </div>
           <div>
             <dt>Last completed check</dt>
@@ -113,11 +115,13 @@ export function Status({
         </dl>
         <a
           className="text-link mt-5"
-          href={`${API_BASE}/docs`}
+          href={API_BASE ? `${API_BASE}/docs` : undefined}
           target="_blank"
           rel="noreferrer"
         >
-          Open interactive API documentation
+          {API_BASE
+            ? "Open interactive API documentation"
+            : "API documentation unavailable until configuration is corrected"}
           <span className="sr-only"> (opens in a new tab)</span> ↗
         </a>
       </Card>

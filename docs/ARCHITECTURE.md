@@ -1,9 +1,39 @@
 # Current architecture
 
-Audited on 2026-10-28. This describes the working tree, including uncommitted
-user code, rather than claiming every file is in the latest commit.
+Current handoff: milestones 1–7 passed the native/local audit, with the final M7
+source checkpoint authorized by the user (2026-10-29). Native application integration is tested;
+Docker runtime and remote CI are pending. No public release or operational model
+approval. Earlier engineering/audit details below are retained as project history.
 
-## Repository map
+## Current application topology
+
+```mermaid
+flowchart LR
+    Browser[React dashboard] -->|health, model/info, predict| API[FastAPI]
+    API -->|one trusted startup load| Model[Ignored frozen v1 artifact]
+    Browser --> Docs[Eight public Markdown documents]
+    Source[Source + exact dependency snapshots] --> Containers[Optional local container candidates]
+```
+
+The browser sends only five approved features; API health and model readiness are
+independent. Model inference never reads the raw dataset. The historical aggregate
+snapshot in evaluation.ts is static documentation, not telemetry. Native API and
+preview/dev servers bind loopback; sample Compose publishes loopback ports only.
+
+| Current path | Responsibility |
+| --- | --- |
+| frontend/src/pages, components | Five responsive sections and shared UI |
+| frontend/src/api.ts, useSystem.ts | Typed/runtime-checked API and status refresh |
+| src/freightguard/api | Schemas, configuration, startup, CORS/errors and endpoints |
+| src/freightguard/model_artifact.py | Original trust/checksum/schema loader and inference |
+| tests, frontend/src/*.test.*, frontend/e2e | Synthetic regressions and browser/axe QA |
+| requirements, frontend/package-lock.json | Observed Python pins and npm dependency lock |
+| Dockerfile, compose*.yaml, deploy | Unverified local container candidates |
+| .github/workflows/checks.yml | Prepared synthetic CI; no deployment |
+| scripts/audit_repository.py | Redacted public file/history/bundle review aid |
+| docs | Contracts, evaluation, setup, security and release evidence |
+
+## Repository map (original milestone 1–4 audit)
 
 ```text
 FreightGuard-AI/
@@ -191,5 +221,40 @@ and browser-test output. Vitest/Testing Library cover critical UI/API behavior;
 Playwright tests the real synthetic workflow at desktop/mobile sizes. ESLint and
 TypeScript check source; production build includes type checks. See FRONTEND.md.
 
-Milestone 5 committed as `06461e7`; Milestone 6 remains uncommitted for review.
+Milestone 5 committed as `06461e7`; Milestone 6 committed as `d9cdf73`.
 Both inspect_data.py versions and frozen artifacts must remain unchanged.
+
+
+## Milestone 7: integration, QA and release preparation
+
+Repository additions: `requirements/runtime.txt` and `dev.txt` snapshot the reviewed
+Python environment; `Dockerfile`, `.dockerignore`, `compose.yaml`,
+`compose.model.yaml` and `deploy/nginx.conf` prepare optional local containers.
+The base application starts without a model. Explicit override mounts only the
+trusted local artifact read-only; no dataset, artifact, credential or .git enters
+images. Frontend and backend host ports bind loopback. Docker is absent here,
+so builds/container operation/image scans are pending, not verified architecture.
+The intended container flow is browser -> localhost frontend Nginx (5173) plus
+browser -> localhost FastAPI (8000), not an invented API proxy/service endpoint.
+
+Native verified flow remains React -> three existing FastAPI endpoints -> one
+startup-loaded, checksum-verified pipeline. No ML artifact/training/evaluation
+code was changed. API vocabulary-shape checks fail closed; sanitized unexpected
+errors preserve explicit CORS policy and security/cache headers. Browser runtime
+validation rejects score/classification contradictions and bad API configuration
+without crashing the app. Country/region normalization matches backend behavior.
+Eight allowlisted public Markdown files are now bundled; no arbitrary repository
+file server was added. Historical figures remain manually sourced from TRAINING.md.
+
+`frontend/e2e/workflow.spec.ts` adds axe checks for five pages, a 320px overflow
+check, and visible 422/503/500 error checks. Text contrast was corrected; original
+responsive navigation/cards/forms retained. Unit/UI regression checks cover
+not-late interpretation, contradictory outputs, and URL configuration.
+
+`scripts/audit_repository.py` is a redacted review aid for reachable Git file
+history/current public files/build output. It is not a comprehensive PII detector.
+`.github/workflows/checks.yml` prepares read-only synthetic checks and no deployment;
+remote execution remains pending. SECURITY.md records advisory checks and limits;
+DEPLOYMENT.md and RELEASE_CHECKLIST.md identify external-release gates. README is
+now the portfolio entry point, including truthful results and screenshot guidance.
+Milestone 7 is uncommitted; no public release or deployment has occurred.

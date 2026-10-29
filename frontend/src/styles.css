@@ -228,7 +228,7 @@
     align-items: center;
     gap: 14px;
     font-size: 11px;
-    color: #71857b;
+    color: #55655d;
   }
   .breadcrumb span {
     color: #344f45;
@@ -249,7 +249,7 @@
     font-size: 9px;
     font-weight: 650;
     letter-spacing: 1.6px;
-    color: #6b8176;
+    color: #55675f;
     line-height: 1.5;
     margin-bottom: 8px;
   }
@@ -261,7 +261,7 @@
   }
   .page-header > div > p:last-child {
     font-size: 12px;
-    color: #6d8077;
+    color: #57665f;
     margin-top: 8px;
   }
   .page-content {
@@ -291,7 +291,7 @@
     border-color: #d2e8d7;
   }
   .badge-warning {
-    color: #8b5b18;
+    color: #845616;
     background: #fcf6e9;
     border-color: #eddfba;
   }
@@ -326,7 +326,7 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: #427c66;
+    color: #376956;
     letter-spacing: 1.6px;
     font-size: 8px;
     font-weight: 650;
@@ -338,12 +338,12 @@
     margin: 17px 0 12px;
   }
   .hero h2 span {
-    color: #397e62;
+    color: #306b53;
   }
   .hero p {
     max-width: 390px;
     font-size: 11px;
-    color: #5f7a69;
+    color: #506759;
     margin-bottom: 21px;
   }
   .button {
@@ -381,7 +381,7 @@
     top: 0;
     bottom: 0;
     width: 33%;
-    color: #548c72;
+    color: #3f6b56;
     background-image: radial-gradient(#a0beaa 1px, transparent 1px);
     background-size: 18px 18px;
     mask-image: linear-gradient(90deg, transparent, black 25%);
@@ -440,7 +440,7 @@
     border: 1px solid #ecdfc2;
     border-radius: 8px;
     padding: 16px 19px;
-    color: #916328;
+    color: #825924;
   }
   .notice > svg {
     flex-shrink: 0;
@@ -452,7 +452,7 @@
   }
   .notice p {
     font-size: 11px;
-    color: #8c7451;
+    color: #715d40;
     margin-top: 3px;
   }
   .card {
@@ -497,7 +497,7 @@
     justify-content: space-between;
     gap: 8px;
     font-size: 11px;
-    color: #5e7667;
+    color: #546a5c;
   }
   .mini-label {
     display: inline-block;
@@ -507,7 +507,7 @@
     background: #f0f4ef;
     padding: 3px 5px;
     border-radius: 3px;
-    color: #738674;
+    color: #576658;
   }
   .metric-value {
     font-size: 32px;
@@ -522,7 +522,7 @@
     font-size: 10px;
   }
   .muted {
-    color: #637a6c;
+    color: #54675b;
   }
   .bar-track {
     background: #eff3ef;
@@ -545,7 +545,7 @@
   .chart-note,
   .source-note {
     margin-top: 23px;
-    color: #718375;
+    color: #556359;
     font-size: 10px;
     line-height: 1.7;
   }
@@ -616,7 +616,7 @@
     display: flex;
     gap: 12px;
     justify-content: space-between;
-    color: #68816d;
+    color: #536757;
     font-size: 8px;
   }
   label {
@@ -626,7 +626,7 @@
     margin-bottom: 8px;
   }
   .required {
-    color: #768a7d;
+    color: #55635a;
   }
   input,
   select {
@@ -640,7 +640,7 @@
     font-size: 12px;
   }
   input::placeholder {
-    color: #7c8e81;
+    color: #59665c;
   }
   select {
     padding-right: 25px;
@@ -651,7 +651,7 @@
   }
   .field-hint {
     font-size: 10px;
-    color: #718577;
+    color: #55655a;
     margin-top: 7px;
   }
   .field-error {
@@ -692,7 +692,7 @@
   .empty-result p {
     font-size: 12px;
     max-width: 260px;
-    color: #6c8172;
+    color: #56675b;
   }
   .empty-result .mini-label {
     margin-top: 14px;
@@ -706,7 +706,7 @@
     background: #f2f6ef;
     width: 77px;
     height: 77px;
-    color: #7b9d7d;
+    color: #4e6550;
     margin-bottom: 8px;
   }
   .risk-value {
@@ -751,7 +751,7 @@
   }
   .classification strong {
     background: #f9f0df;
-    color: #8e672d;
+    color: #7f5c27;
     border-radius: 5px;
     padding: 6px 11px;
   }
@@ -761,7 +761,7 @@
     margin: 20px 0;
     font-size: 11px;
     line-height: 1.7;
-    color: #7b6b4f;
+    color: #6e5f47;
   }
   .warning-list li + li {
     margin-top: 8px;
@@ -793,7 +793,7 @@
   .confusion-grid span {
     display: block;
     font-size: 11px;
-    color: #71826b;
+    color: #5a6855;
   }
   .confusion-grid strong {
     display: block;
@@ -818,7 +818,7 @@
   }
   thead th {
     font-size: 9px;
-    color: #73846e;
+    color: #576453;
     font-weight: 550;
     background: #f5f8f1;
   }
@@ -831,7 +831,7 @@
   .selected-tag {
     margin-left: 10px;
     background: #e1efda;
-    color: #4e713f;
+    color: #4a6b3b;
     border-radius: 4px;
     padding: 4px 6px;
     font-size: 8px;
@@ -839,7 +839,7 @@
   .number-step {
     display: inline-block;
     margin-bottom: 17px;
-    color: #779b69;
+    color: #506a47;
     font-size: 11px;
     font-weight: 600;
   }
@@ -854,11 +854,11 @@
   }
   .status-banner > svg {
     flex-shrink: 0;
-    color: #557b44;
+    color: #486839;
   }
   .status-banner p {
     font-size: 12px;
-    color: #657c5a;
+    color: #55694c;
     margin-top: 7px;
   }
   .status-banner .button {
@@ -874,7 +874,7 @@
     font-size: 12px;
   }
   dt {
-    color: #6c7f60;
+    color: #56664c;
   }
   dd {
     text-align: right;
@@ -882,7 +882,7 @@
   .troubleshooting {
     list-style: decimal;
     padding-left: 18px;
-    color: #657b59;
+    color: #55684b;
     font-size: 12px;
     line-height: 1.8;
   }
@@ -901,14 +901,14 @@
   .about-intro > p {
     max-width: 650px;
     font-size: 14px;
-    color: #6f8065;
+    color: #596650;
   }
   .about-icon {
     display: inline-grid;
     place-items: center;
     width: 43px;
     height: 43px;
-    color: #668950;
+    color: #4c683c;
     background: #edf3e7;
     border-radius: 10px;
   }
@@ -930,12 +930,12 @@
   .architecture-flow span {
     display: block;
     font-size: 10px;
-    color: #6a7e5f;
+    color: #55654c;
     margin-top: 8px;
   }
   .architecture-flow > svg {
     flex-shrink: 0;
-    color: #8aa077;
+    color: #59674c;
   }
   .documentation-grid {
     display: grid;
@@ -976,10 +976,10 @@
   }
   @keyframes appear {
     from {
-      opacity: 0.5;
+      transform: translateY(2px);
     }
     to {
-      opacity: 1;
+      transform: translateY(0);
     }
   }
   @media (min-width: 1600px) {

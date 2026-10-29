@@ -155,3 +155,27 @@ zero vulnerabilities in the locked tree. Full Ruff retains only the existing
 inspect_data.py I001. Known non-failing messages include the installed ESLint 9
 version-support deprecation, Zod PURE-comment build annotations and the existing
 Starlette/HTTPX TestClient deprecation. See PROGRESS.md for evidence and boundaries.
+
+
+## Milestone 7 QA follow-up
+
+Client validation now checks score/classification consistency at frozen 0.40,
+normalizes broad geography like Pydantic and handles invalid base-URL configuration
+without crashing. Unit/UI coverage is 38 tests. Browser coverage adds axe WCAG
+A/AA analysis on all five pages, 320px overflow, and visible 422/503/500 error
+messages. Low-contrast secondary text was darkened without changing dashboard
+structure. @axe-core/playwright is a development-only test dependency.
+
+Eight public docs are now allowlisted, adding deployment/security/release review.
+The history/build scanner is a redacted review aid, not a complete PII detector.
+Optional container and read-only CI candidates are documented in DEPLOYMENT.md;
+they have not run in Docker/GitHub here. M6 is committed as d9cdf73; M7 stays
+uncommitted. No public hosting, artifact changes or operational approval.
+
+
+For an audit when port 5173 is occupied, preserve the existing server. Start a
+separate preview with `npm run preview -- --port 5174`, explicitly add
+`http://127.0.0.1:5174` to the audit backend's FREIGHTGUARD_CORS_ORIGINS, and run
+`PLAYWRIGHT_BASE_URL=http://127.0.0.1:5174 npm run test:e2e`. Default development
+origins and browser base URL remain on 5173. FINAL_AUDIT.md records this verified
+production-preview workflow and its limitations.

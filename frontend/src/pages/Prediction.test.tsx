@@ -129,3 +129,26 @@ describe("shipment prediction form", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+it("displays a not-late response without changing the model label", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      json({
+        ...prediction,
+        risk_score: 0.2,
+        experimental_prediction: "not_late",
+      }),
+    ),
+  );
+  render(<Prediction info={info} loading={false} />);
+  const user = await fill();
+  await user.click(
+    screen.getByRole("button", { name: /Calculate experimental risk/ }),
+  );
+  expect(
+    await screen.findByText("Not late", { exact: true }),
+  ).toBeInTheDocument();
+  expect(screen.getByText("20.0")).toBeInTheDocument();
+  expect(screen.getByText(/not a delivery guarantee/)).toBeInTheDocument();
+});

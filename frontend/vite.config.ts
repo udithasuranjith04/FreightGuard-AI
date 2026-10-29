@@ -11,6 +11,9 @@ const documents = [
   "MODEL_QUALITY.md",
   "ARCHITECTURE.md",
   "FRONTEND.md",
+  "DEPLOYMENT.md",
+  "SECURITY.md",
+  "RELEASE_CHECKLIST.md",
 ];
 const documentText = (name: string) =>
   readFileSync(
