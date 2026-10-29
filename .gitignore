@@ -25,3 +25,6 @@ frontend/.env*
 frontend/playwright-report/
 frontend/test-results/
 frontend/coverage/
+
+# Private local learning notes; never publish
+/learning/
