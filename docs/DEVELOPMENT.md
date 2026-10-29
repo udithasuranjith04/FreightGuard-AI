@@ -205,5 +205,19 @@ the deployed application; raw customer data must remain offline.
 ## Local API
 
 See [API.md](API.md) for installation, exact startup commands, environment
-configuration, synthetic curl examples and OpenAPI. Milestone 5 is local only,
-uncommitted for review; no frontend or hosting has been added.
+configuration, synthetic curl examples and OpenAPI. Milestone 5 is committed as `06461e7`. Milestone 6 adds the local React dashboard;
+public hosting remains deferred.
+
+
+## Frontend and full application
+
+Follow [FRONTEND.md](FRONTEND.md) for the two-terminal startup sequence,
+public VITE_API_BASE_URL configuration, production preview and browser tests.
+From `frontend/`, run `npm ci`, `npm run typecheck`, `npm run lint`, `npm test`,
+and `npm run build`. `npm run test:e2e` requires both local servers and Chromium
+(`npx playwright install chromium`). Frontend files and package-lock.json are
+reviewable source; node_modules/dist/test results and .env.local are ignored.
+Backend tests still run from the repository root with `.venv/bin/python -m pytest -q`.
+No raw dataset is required for unit tests or a dashboard build. Real predictions
+require the existing trusted local v1 pipeline. Never refit or repeat the original
+test evaluation for dashboard verification; use the documented synthetic shipment.

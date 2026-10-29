@@ -97,8 +97,8 @@ pytest 9.1.1, and Ruff 0.17.3. These are observed local versions, not a lockfile
 or a guarantee about a fresh installation.
 
 Pytest searches `tests/`; Ruff's configured line length is 88.
-FastAPI, an ASGI server, frontend packages, CI, and deployment configuration are
-absent. Training logs fixed candidate/run events without records. A fitted
+FastAPI/Uvicorn and the React frontend are now present (milestones 5/6 below).
+CI and public deployment configuration remain absent. Training logs fixed candidate/run events without records. A fitted
 pipeline and aggregate evaluation report now exist under ignored local data.
 Synthetic pytest coverage now exists for the dataset contract; the original
 milestone 1 observation that no tests existed is superseded by milestone 2.
@@ -163,4 +163,33 @@ requests use the same frozen pipeline. Failure leaves health/info available and
 prediction unavailable. Model info exposes broad training categories, never rows.
 `tests/test_api.py` tests synthetic behavior. Dependencies add FastAPI/Pydantic/
 Uvicorn, with dev HTTPX. No frontend/service/database added. See [API.md](API.md).
-Milestone 4.1 checkpoint is `1fec68c`; Milestone 5 is uncommitted for review.
+Milestone 4.1 checkpoint is `1fec68c`; Milestone 5 is committed as `06461e7`.
+
+
+## Milestone 6: implemented local dashboard
+
+`frontend/` is an independent npm package with locked dependencies: React 19,
+strict TypeScript, Vite 7 and Tailwind 4. Shared cards/buttons/badges/notices live
+in `src/components/ui.tsx`; five page modules provide overview, prediction, model
+insights, status and documentation. `App.tsx` owns hash navigation and responsive
+sidebar. `src/api.ts` holds exact request/response names and Zod runtime checking.
+`useSystem.ts` independently checks health/info and avoids superseded updates.
+`styles.css` supplies visual tokens, shared component styles and media queries.
+
+Requests go directly to the existing three API endpoints through a public
+`VITE_API_BASE_URL`. The form contains precisely five approved fields; dropdowns
+use actual frozen training categories. There is no frontend model loading,
+local-storage persistence, service database or new Python dependency. Model
+readiness and backend connectivity are separate, actual status checks.
+`src/evaluation.ts` is a manually transcribed, sourced historical aggregate
+snapshot from TRAINING.md; it is not live data or a generated model artifact.
+
+Vite serves/emits only five allowlisted public Markdown documents. The frontend
+build includes no raw dataset, fitted pipeline or local model metadata. Ignore
+rules cover node_modules, dist, environment files (except the secret-free example),
+and browser-test output. Vitest/Testing Library cover critical UI/API behavior;
+Playwright tests the real synthetic workflow at desktop/mobile sizes. ESLint and
+TypeScript check source; production build includes type checks. See FRONTEND.md.
+
+Milestone 5 committed as `06461e7`; Milestone 6 remains uncommitted for review.
+Both inspect_data.py versions and frozen artifacts must remain unchanged.

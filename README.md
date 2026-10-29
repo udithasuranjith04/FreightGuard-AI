@@ -17,7 +17,7 @@ arrival.
 - Baseline model and model comparison
 - Model evaluation and error analysis
 - Automated tests
-- Interactive prediction dashboard
+- Responsive React/TypeScript prediction dashboard
 
 ## Project status
 
@@ -26,8 +26,7 @@ The baseline
 problem is order-level delay prediction when the checkout shipping plan is
 finalized, conditional on the order not later being canceled. Random Forest was
 selected on validation, but its frozen threshold predicts every test order late;
-this limits its usefulness for selective alerts. The local FastAPI backend serves educational predictions; the dashboard is
-not implemented yet. See the full [evaluation and limitations](docs/TRAINING.md).
+this limits its usefulness for selective alerts. The local FastAPI backend and React dashboard serve educational predictions. See the full [evaluation and limitations](docs/TRAINING.md).
 
 The engineering implementation is accepted; effective binary alerts are not.
 Validation-only investigation shows that strong top-10% precision matches a simple
@@ -100,3 +99,35 @@ See [API setup, commands, examples, and configuration](docs/API.md).
 The API exposes `/health`, `/model/info`, and `/predict`; interactive docs are
 available at `http://127.0.0.1:8000/docs` after startup. Explicit local artifact
 trust and SHA-256 verification are required for predictions.
+
+
+## Run the full dashboard
+
+Use two terminals from the repository root. Python 3.12 and Node >=22.12 are
+required. Verify/trust only your locally produced artifact (see [API setup](docs/API.md)).
+
+Terminal 1:
+
+```sh
+source .venv/bin/activate
+export FREIGHTGUARD_TRUST_LOCAL_MODEL=true
+export FREIGHTGUARD_MODEL_SHA256=e3d46fa78998d13584ed7d7ea88bd321c69e2773aa9b6f18eab20eee73d0ddef
+python -m uvicorn freightguard.api.app:app --host 127.0.0.1 --port 8000 --no-access-log
+```
+
+Terminal 2:
+
+```sh
+cd frontend
+npm ci
+cp .env.example .env.local
+npm run dev
+```
+
+Open <http://127.0.0.1:5173>. The dashboard includes Overview, Shipment Prediction,
+Model Insights, System Status, and About/Documentation. Historical metrics are
+labeled; no live shipment counts or operational KPIs are invented.
+`VITE_API_BASE_URL` is public configuration, never a place for secrets.
+See [frontend setup and checks](docs/FRONTEND.md) for production build, automated
+tests, browser integration and known limitations. The API docs remain at
+<http://127.0.0.1:8000/docs>. Neither app is publicly deployed.

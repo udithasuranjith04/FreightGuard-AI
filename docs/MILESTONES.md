@@ -1,9 +1,10 @@
 # Implementation plan
 
-Created before implementation on 2026-10-28. Milestones 1–4 and 4.1 are complete.
+Created before implementation on 2026-10-28. Milestones 1–5 are committed; Milestone 6 is implemented for review.
 The user requested commits for milestones 1–4, accepting milestone 4 engineering
-but rejecting approval as effective alerts. Milestone 4.1 is an uncommitted
-validation-only investigation. Milestone 5 API work is authorized and complete locally; frontend is deferred.
+but rejecting approval as effective alerts. Milestone 4.1 is an approved exploratory
+validation-only investigation. Milestone 5 is committed as `06461e7`; Milestone 6
+adds the authorized local frontend and remains uncommitted.
 
 At every milestone: read instructions/progress, inspect Git changes, write a
 focused plan, implement that scope, run relevant checks, explain the result in
@@ -67,14 +68,14 @@ small; split a milestone into substeps if its diff becomes difficult to explain.
 5. Test grouped sensitivity and reproducibility with no fitting/test predictions.
 6. Document an illustrative review policy and recommend redesign for useful alerts.
 
-## Next decision (no further implementation authorized)
+## Modeling decision (redesign not authorized)
 
 Review the quality investigation. The recommendation is to preserve the educational
 v1 and redesign the operational data/problem with a fresh evaluation plan before
 promoting selective alerts. Do not implement a redesign or conduct a second test
 evaluation without approval.
 
-## Milestone 5 (implemented, uncommitted for review)
+## Milestone 5 (implemented, committed as 06461e7)
 
 FastAPI work was requested and implemented; see API.md. Reuse the frozen pipeline/schema/loading
 rules and display research limitations honestly. The selected threshold predicts
@@ -82,10 +83,23 @@ all test orders late; it is not a demonstrated selective-alert improvement.
 Any new modeling experiment needs a documented fresh evaluation plan rather than
 further optimization against this already-observed test set.
 
-Outstanding work includes milestones 5–7. Historical model metrics exist;
-production readiness, frontend framework, and hosting remain unestablished.
+Milestone 6 implementation is complete locally; review and milestone 7 public
+deployment remain outstanding. Operational model effectiveness remains unestablished.
 
 Milestone 4.1 is approved as exploratory and committed as `1fec68c`.
 Milestone 5 adds startup-only trusted inference, strict schemas, health/info, CORS,
 sanitized errors and synthetic API tests. Next work is review, then milestone 6
 only when requested. No further model evaluation is authorized.
+
+
+## Milestone 6 (implemented, uncommitted for review)
+
+Authorized full React/strict TypeScript/Vite/Tailwind dashboard with five sections,
+actual API status, five-input prediction form, typed/runtime-checked API client,
+honest historical metrics/charts/tables, accessibility and mobile layouts. No
+backend endpoints invented, no frontend secrets, no model/threshold/test changes.
+Plan: review/test/commit M5 only, implement modular UI, verify critical states,
+run TypeScript/Vitest/ESLint/build/backend regressions, and run desktop/mobile
+synthetic predictions against both local servers. See FRONTEND.md and PROGRESS.md
+for completed checks. Public deployment remains milestone 7; do not start it or
+new modeling work without a request.

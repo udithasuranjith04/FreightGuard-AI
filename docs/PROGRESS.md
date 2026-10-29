@@ -5,7 +5,8 @@
 Milestones 1–4 and 4.1 are complete. Milestone 4 engineering is accepted and
 committed; effective alerts are not approved. Validation-only quality investigation
 is approved and committed as `1fec68c`. V1's threshold/test results remain frozen; no second test evaluation
-or refitting occurred in 4.1. The local API is implemented; no frontend exists. Recommendation: preserve the
+or refitting occurred in 4.1. The local API is committed as `06461e7`; the Milestone 6 dashboard is implemented
+and uncommitted for review. Recommendation: preserve the
 educational baseline and redesign the data/problem before operational alerts.
 
 ## 2026-10-28 — Milestone 1: document the baseline
@@ -414,3 +415,79 @@ test predictions were late. Readiness means educational inference only. API has
 no authentication or public deployment hardening; bind to loopback as documented.
 No frontend built. Milestone 5 remains uncommitted for review. Suggested checkpoint:
 `feat: serve frozen educational model through FastAPI` (exclude inspect_data.py).
+
+
+## 2026-10-29 — Milestone 5 checkpoint and Milestone 6 dashboard
+
+### Plan and preservation
+
+Reviewed the API schemas/loading/error paths, existing M5 diffs and index. Re-ran
+112 backend tests (passed) and API Ruff (passed) before committing exactly thirteen
+M5 code/test/documentation paths as `06461e7`. Explicit-path commit excluded the
+existing empty staged inspect_data.py; its working SHA-256 is still
+`d5f6dce91efd15e32c122e12f33b7f859fbca40eacb05de71c1870e9f2087709`.
+
+M6 plan: complete five responsive dashboard pages with React, strict TypeScript,
+Vite/Tailwind and reusable UI; mirror the actual API contract, validate inputs and
+network responses, surface honest status/errors/historical metrics; test critical
+behavior, build/lint/type-check, regress backend, then verify synthetic predictions
+through the two running local servers at desktop/mobile widths. Leave M6 uncommitted.
+
+### Implemented
+
+- Added frontend package/configuration/lockfile, public environment example, icon,
+  responsive design system, hash navigation and accessible form/components.
+- Overview, Shipment Prediction, Model Insights, API/System Status, About/docs.
+  Exact five-input requests; category lists from actual model info. Runtime response
+  validation, timeout, loading/empty/error/result states and reset/input-edit clearing.
+- Actual health/info checks with refresh, separate model readiness and connectivity;
+  historical figures sourced from TRAINING.md rather than fabricated live analytics.
+- Historical importance bars, final test confusion counts and validation comparison.
+  Honest all-late cutoff, non-cancellation, weak within-mode signal and no operational
+  validation messaging. Only allowlisted public Markdown docs bundled/served.
+- Synthetic unit/UI and real browser workflow tests; ignores for generated frontend
+  files. Updated AGENTS, README, architecture/setup/milestone docs; added FRONTEND.md.
+- No Python runtime changes, frontend/backend persistence, private datasets in the
+  browser, serialized uploads, model edits, refitting or test-cohort evaluation.
+
+### Validation
+
+| Check | Result |
+| --- | --- |
+| TypeScript strict checking | Passed (`npm run typecheck`). |
+| Frontend ESLint | Passed, zero warnings (`npm run lint`). |
+| Vitest/Testing Library | 29 passed across three files, on patched Vitest 4.1.12. |
+| Production build | Passed; JS ~353 KB (~109 KB gzip), CSS ~22 KB; five allowlisted public docs emitted. |
+| Browser integration | Six Chromium desktop/mobile checks pass: real five-input synthetic prediction, navigation/keyboard/docs/overflow, injected network/model failures. |
+| Backend regression | 112 passed; one existing Starlette/HTTPX TestClient deprecation warning. |
+| Ruff | API clean. Full repository exits 1 only for preserved inspect_data.py I001. |
+| npm dependency audit | Zero vulnerabilities after replacing the older test runner with patched compatible 4.1.12. |
+| Preservation/Git | Original script working hash and empty index blob unchanged; all four frozen artifact hashes unchanged; only data .gitkeep files tracked; generated frontend/data/artifact paths ignored; Git whitespace checks pass. |
+
+Both servers ran locally. Synthetic shipment (4 days, Standard Class, Europe,
+Western Europe, Francia) returned score 0.4272314668675644, displayed 42.7%,
+experimental Late at frozen 0.40. Browser tests assert exactly five request keys
+and explicit operational validation false. No private row or test cohort scored.
+The same six checks also pass against the built production bundle through
+`npm run preview`. Desktop/mobile screenshots were inspected. Keyboard skip link and table/page
+responsive behavior checked; this is not a full assistive-technology certification.
+
+Initial npm/port/browser sandbox restrictions were resolved through approved
+network/process execution. Initial browser selectors were corrected to use
+accessible roles and the complete percentage text. These were test harness
+issues; the final browser suite passes. Production documentation tests accept
+both development text/plain and static text/markdown response types. The current npm clean install was verified
+against package-lock.json. No fresh Python environment installation was attempted.
+
+Known non-failing tooling messages: installed ESLint 9 reports upstream version
+support deprecation during npm install; Vite removes two misplaced PURE comment
+annotations in Zod dependencies; browser runner reports NO_COLOR/FORCE_COLOR
+precedence. No dependency vulnerabilities were reported by the final npm audit.
+
+### Review checkpoint
+
+Milestone 6 remains uncommitted, with no M6 files staged. Suggested commit:
+`feat: add responsive educational logistics dashboard`. Review frontend source,
+lockfile, environment example, ignore rules and docs only; exclude inspect_data.py
+and all generated files. Model remains an educational shipping-plan demonstration,
+not operationally validated. No public deployment or additional modeling work.

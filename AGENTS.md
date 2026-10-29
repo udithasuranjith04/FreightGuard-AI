@@ -20,8 +20,12 @@ keeping the code understandable to a Python learner. Preserve existing work.
 
 Milestones 1–4 and 4.1 (validation-only quality investigation) are complete.
 Milestone 4 engineering is accepted; the model is not approved as effective binary
-alerts. Milestone 5 local FastAPI backend is implemented, uncommitted for review;
-frontend does not exist. Read `docs/API.md` before API changes.
+alerts. Milestone 5 local FastAPI backend is committed as `06461e7`.
+Milestone 6 React/TypeScript dashboard is implemented, uncommitted for review.
+Read `docs/API.md` before API changes and `docs/FRONTEND.md` before frontend work.
+Keep frontend metrics labeled historical; never invent shipment records or KPIs.
+Frontend checks: `cd frontend`, then `npm run typecheck`, `npm run lint`,
+`npm test`, and `npm run build`. Browser tests need both local servers.
 `python -m freightguard.validate_data` checks the version 1 order-level contract
 and prints only aggregate JSON. Read `docs/DATA_AND_ML.md` before ML changes.
 `python -m freightguard.prepare_data` creates chronological order splits and fits

@@ -15,3 +15,12 @@ data/processed/*
 # IDE settings
 .idea/
 *.egg-info/
+
+# Local frontend dependencies, builds, environment and browser-test output
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
+!frontend/.env.example
+frontend/playwright-report/
+frontend/test-results/
+frontend/coverage/
