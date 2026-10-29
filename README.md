@@ -1,5 +1,7 @@
 # FreightGuard AI
 
+<img width="1415" height="788" alt="image" src="https://github.com/user-attachments/assets/1eb6ba60-ddbe-4791-8639-9d71e261d9bc" />
+
 An educational logistics dashboard that explores shipment delay prediction with
 an honest account of model quality. Built as a Python/ML and full-stack portfolio
 project; **not operationally validated and not a production alerting service**.
